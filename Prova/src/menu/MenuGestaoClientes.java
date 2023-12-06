@@ -1,5 +1,4 @@
 package menu;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,8 +8,8 @@ public class MenuGestaoClientes {
 	private List<Cliente> clientes;
     private Scanner scanner;
 
-    public MenuGestaoClientes() {
-        this.clientes = new ArrayList<>();
+    public MenuGestaoClientes(List<Cliente> clientes) {
+        this.clientes = clientes;
     	this.scanner = new Scanner(System.in);
     }
 
@@ -134,11 +133,5 @@ public class MenuGestaoClientes {
                         },
                         () -> System.out.println("Cliente não encontrado.")
                 );
-    }
-
-
-    public static void main(String[] args) {
-        MenuGestaoClientes menu = new MenuGestaoClientes();
-        menu.exibirMenu();
     }
 }

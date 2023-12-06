@@ -6,9 +6,8 @@ public class Imovel {
 	
 	private String matricula;
 	private String endereco;
-	private int leituraAtual;
-	private int ultimaLeitura;
-	private int penultimaLeitura;
+	private double leituraAtual;
+	private double leituraAnterior;
 	private List<Fatura> faturas;
 	
 	public Imovel(String matricula, String endereco) {
@@ -32,28 +31,20 @@ public class Imovel {
 		this.endereco = endereco;
 	}
 
-	public int getLeituraAtual() {
+	public double getLeituraAtual() {
 		return leituraAtual;
 	}
 
-	public void setLeituraAtual(int leituraAtual) {
+	public void setLeituraAtual(double leituraAtual) {
 		this.leituraAtual = leituraAtual;
 	}
-
-	public int getUltimaLeitura() {
-		return ultimaLeitura;
+	
+	public double getLeituraAnterior() {
+		return leituraAnterior;
 	}
 
-	public void setUltimaLeitura(int ultimaLeitura) {
-		this.ultimaLeitura = ultimaLeitura;
-	}
-
-	public int getPenultimaLeitura() {
-		return penultimaLeitura;
-	}
-
-	public void setPenultimaLeitura(int penultimaLeitura) {
-		this.penultimaLeitura = penultimaLeitura;
+	public void setLeituraAnterior(double leituraAnterior) {
+		this.leituraAnterior = leituraAnterior;
 	}
 
 	public List<Fatura> getFaturas() {

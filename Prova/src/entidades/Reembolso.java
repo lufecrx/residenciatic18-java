@@ -2,12 +2,12 @@ package entidades;
 
 import java.util.Calendar;
 
-public class Pagamento {
+public class Reembolso {
     private int idFatura;
-    private float valor;
+    private double valor;
     private Calendar data;
 
-    public Pagamento(int idFatura, float valor, Calendar data) {
+    public Reembolso(int idFatura, double valor, Calendar data) {
         this.idFatura = idFatura;
         this.valor = valor;
         this.data = data;
@@ -17,7 +17,7 @@ public class Pagamento {
         return idFatura;
     }
 
-    public float getValor() {
+    public double getValor() {
         return valor;
     }
 

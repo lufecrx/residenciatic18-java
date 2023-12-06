@@ -1,6 +1,5 @@
 package menu;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,8 +9,8 @@ public class MenuGestaoImoveis {
 	private List<Imovel> imoveis;
     private Scanner scanner;
 
-    public MenuGestaoImoveis() {
-    	this.imoveis = new ArrayList<>();
+    public MenuGestaoImoveis(List<Imovel> imoveis) {
+    	this.imoveis = imoveis;
         this.scanner = new Scanner(System.in);
     }
 
@@ -63,7 +62,19 @@ public class MenuGestaoImoveis {
         String endereco = scanner.nextLine();
 
         Imovel novoImovel = new Imovel(matricula, endereco);
+        
+        System.out.println("Leitura anterior de energia: ");
+        double leituraAnterior = scanner.nextDouble();
+        
+        System.out.println("Leitura atual de energia: ");
+        double leituraAtual = scanner.nextDouble();
+        
+        novoImovel.setLeituraAnterior(leituraAnterior);
+        novoImovel.setLeituraAtual(leituraAtual);
+        
         imoveis.add(novoImovel);
+        
+        
 
         System.out.println("Imóvel incluído com sucesso!");
     }
@@ -117,7 +128,7 @@ public class MenuGestaoImoveis {
         System.out.println("Digite a matrícula do imóvel que deseja alterar: ");
         String matricula = scanner.nextLine();
 
-        // Utilizando a API de Stream para encontrar o imóvel pela matrícula
+        // Encontrar o imóvel pela matrícula
         imoveis.stream()
                 .filter(imovel -> imovel.getMatricula().equals(matricula))
                 .findFirst()
@@ -138,10 +149,5 @@ public class MenuGestaoImoveis {
                         },
                         () -> System.out.println("Imóvel não encontrado.")
                 );
-    }
-
-    public static void main(String[] args) {
-        MenuGestaoImoveis menu = new MenuGestaoImoveis();
-        menu.exibirMenu();
     }
 }
