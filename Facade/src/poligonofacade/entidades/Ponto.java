@@ -6,10 +6,12 @@ public class Ponto {
 	
 	private double x;
 	private double y;
+	private double z;
 	
-	public Ponto(double x, double y) {
+	public Ponto(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
+		this.z = z;
 	}
 	
 	public double getX() {
@@ -20,10 +22,15 @@ public class Ponto {
 		return y;
 	}
 	
+	public double getZ() {
+		return z;
+	}
+	
 	public double distanciaPara(Ponto ponto) {
-		double quadradoDiferencaX = Math.pow(ponto.getX() - this.getX(), 2);
-		double quadradoDiferencaY = Math.pow(ponto.getY() - this.getY(), 2);
-		double somaQuadrados = quadradoDiferencaX + quadradoDiferencaY;
+		double quadradoDiferencaX = Math.pow(this.getX() - ponto.getX(), 2);
+		double quadradoDiferencaY = Math.pow(this.getY() - ponto.getY(), 2);
+		double quadradoDiferencaZ = Math.pow(this.getZ() - ponto.getZ(), 2);
+		double somaQuadrados = quadradoDiferencaX + quadradoDiferencaY + quadradoDiferencaZ;
 
 		// Calculando a raiz quadrada da soma dos quadrados
 		double distancia = Math.sqrt(somaQuadrados);
@@ -34,6 +41,7 @@ public class Ponto {
 	public static Ponto solicitaPonto(Scanner scanner) {
         double x = 0; 
         double y = 0;
+        double z = 0;
         
         boolean entradaValida = false;
 
@@ -46,6 +54,9 @@ public class Ponto {
 
                 System.out.print("Coordenada Y: ");
                 y = scanner.nextDouble();
+                
+                System.out.print("Coordenada Z: ");
+                z = scanner.nextDouble();
 
                 entradaValida = true;
             } catch (java.util.InputMismatchException e) {
@@ -54,6 +65,6 @@ public class Ponto {
             }
         } while (!entradaValida);    
 
-        return new Ponto(x, y);
+        return new Ponto(x, y, z);
     }
 }
