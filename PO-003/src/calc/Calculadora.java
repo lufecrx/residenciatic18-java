@@ -1,9 +1,7 @@
 // Exceção personalizada para divisão por zero
-class DivisionByZeroException extends Exception {
-    public DivisionByZeroException(String mensagem) {
-        super(mensagem);
-    }
-}
+package calc;
+
+import calc.exceptions.DivisionByZeroException;
 
 // Classe Calculadora com métodos para as 4 operações
 public class Calculadora {
