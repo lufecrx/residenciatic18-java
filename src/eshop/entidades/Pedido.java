@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Pedido {
 
-    int numeroPedido;
-    String cpfDoCliente;
-    List<Item> itens;
+    private int numeroPedido;
+    private String cpfDoCliente;
+    private List<Item> itens;
     
     public Pedido (int numeroPedido, String cpfDoCliente) {
         this.numeroPedido = numeroPedido;
@@ -31,7 +31,7 @@ public class Pedido {
     public double calcularTotal(double descontoPercentual) {
         double total = 0;
         for (Item item : itens) {
-            total += item.preco;
+            total += item.getPreco();
         }
         double desconto = total * (descontoPercentual / 100);
         return total - desconto;
@@ -41,7 +41,7 @@ public class Pedido {
     public double calcularTotal(int numPrestacoes, double juroPorcentual) {
         double total = 0;
         for (Item item : itens) {
-            total += item.preco;
+            total += item.getPreco();
         }
         double juros = total * (juroPorcentual / 100);
         return total + juros;
@@ -53,7 +53,7 @@ public class Pedido {
         System.out.println("CPF do Cliente: " + cpfDoCliente);
         System.out.println("Itens do Pedido: ");
         for (Item item : itens) {
-            System.out.println(item.nome + ": " + item.preco);
+            System.out.println(item.getNome() + ": " + item.getPreco());
         }
     }
 }
