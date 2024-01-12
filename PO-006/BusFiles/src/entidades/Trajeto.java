@@ -3,11 +3,11 @@ package entidades;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trajeito {
+public class Trajeto {
     
     private List<Trecho> trechos;
     
-    public Trajeito() {
+    public Trajeto() {
         this.trechos = new ArrayList<>();
     }
     
