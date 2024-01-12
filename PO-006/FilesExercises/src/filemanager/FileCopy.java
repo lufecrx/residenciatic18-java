@@ -36,6 +36,8 @@ public class FileCopy {
         } else {
             System.out.println("O arquivo não existe.");
         }
+
+        scanner.close();
         
     }
 }
