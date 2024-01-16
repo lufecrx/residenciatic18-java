@@ -21,7 +21,7 @@ public class Motorista implements RegistroInterface {
     }
 
     @Override
-    public String toFormattedString() {
+    public String toString() {
         return nome + ";" + cnh;
     }
 }

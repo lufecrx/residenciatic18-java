@@ -16,7 +16,7 @@ public class GerenciadorDeDados {
         } catch (IOException e) {
             System.out.println("Erro ao limpar o arquivo: " + e.getMessage());
         }
-
+        
         // Salvar dados em um arquivo
         try {
             FileWriter writer = new FileWriter("arquivos/"+ nomeDoArquivo + ".txt");
@@ -25,16 +25,24 @@ public class GerenciadorDeDados {
                 writer.write(System.lineSeparator());
             }
             writer.close();
-            System.out.println("Dados salvos com sucesso!");
         } catch (IOException e) {
             System.out.println("Erro ao salvar os dados: " + e.getMessage());
         }
     }
 
     public static void criarArquivoInexistente(String arquivo) throws IOException {
-        File file = new File(arquivo); 
-        if(!file.exists())
+        // Verificar se o diretório existe e se não existir, criar
+        File diretorio = new File("arquivos");
+        if (!diretorio.exists()) {
+            diretorio.mkdir();
+        }
+
+        // Criar arquivo se ele não existir
+        File file = new File(arquivo);
+        if (!file.exists()) {
             file.createNewFile();
+        }
+
     }
     
 }

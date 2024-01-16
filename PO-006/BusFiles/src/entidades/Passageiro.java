@@ -35,7 +35,7 @@ public class Passageiro implements RegistroInterface {
     }
 
     @Override
-    public String toFormattedString() {
+    public String toString() {
         return nome + ";" + cpf + ";" + cartao + ";" + numCartao;
     }
 }

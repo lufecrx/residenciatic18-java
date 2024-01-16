@@ -68,7 +68,7 @@ public class Parada implements RegistroInterface {
 	}
 
     @Override
-    public String toFormattedString() {
+    public String toString() {
         return nome;
     }
 

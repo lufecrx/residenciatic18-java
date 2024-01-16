@@ -29,10 +29,10 @@ public class Trajeto implements RegistroInterface {
     }
 
     @Override
-    public String toFormattedString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < trechos.size(); i++) {
-            sb.append(trechos.get(i).toFormattedString());
+            sb.append(trechos.get(i).toString());
             if (i < trechos.size() - 1) {
                 sb.append("|"); // Caractere especial para separar os trechos
             }

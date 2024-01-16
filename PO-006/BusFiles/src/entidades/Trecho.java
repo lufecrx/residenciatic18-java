@@ -27,7 +27,7 @@ public class Trecho implements RegistroInterface {
     }
 
     @Override
-    public String toFormattedString() {
+    public String toString() {
         return origem.getNome() + ";" + destino.getNome() + ";" + minutos;
     }
 }

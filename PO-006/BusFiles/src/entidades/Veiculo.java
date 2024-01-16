@@ -27,7 +27,7 @@ public class Veiculo implements RegistroInterface {
     }    
 
     @Override
-    public String toFormattedString() {
+    public String toString() {
         return placa + ";" + marca + ";" + modelo;
     }
 }

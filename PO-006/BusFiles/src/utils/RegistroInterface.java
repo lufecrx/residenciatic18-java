@@ -2,5 +2,5 @@ package utils;
 
 public interface RegistroInterface {
     
-    public String toFormattedString();
+    public String toString();
 }
