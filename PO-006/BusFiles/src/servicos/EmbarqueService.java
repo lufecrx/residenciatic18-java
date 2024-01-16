@@ -1,6 +1,7 @@
 package servicos;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,15 +49,15 @@ public class EmbarqueService implements CadastroInterface {
 
         int trechoIdx;
         try {
-            System.out.print("Selecione o número correspondente do trecho (parada de origem) para associar ao embarque: ");
+            System.out.print(
+                    "Selecione o número correspondente do trecho (parada de origem) para associar ao embarque: ");
             trechoIdx = scanner.nextInt();
             validarTrechoIdx(trechoIdx);
         } catch (InputMismatchException e) {
             System.out.println("Erro: Entrada inválida para trecho");
             scanner.nextLine();
             return;
-        } 
-        catch (CadastroInvalidoException e) {
+        } catch (CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
             return;
         }
@@ -76,7 +77,7 @@ public class EmbarqueService implements CadastroInterface {
             passageiroIdx = scanner.nextInt();
             validarPassageiroIdx(passageiroIdx);
         } catch (InputMismatchException e) {
-            System.out.println("Erro: Entrada inválida parapassageiro"); 
+            System.out.println("Erro: Entrada inválida parapassageiro");
             scanner.nextLine();
             return;
         } catch (CadastroInvalidoException e) {
@@ -89,6 +90,8 @@ public class EmbarqueService implements CadastroInterface {
         System.out.println("Passageiro selecionado: " + passageiroAssociado.getNome());
 
         embarques.add(new Embarque(passageiroAssociado, paradaDeOrigem));
+        System.out.println("Embarque cadastrado com sucesso!");
+        salvar();
     }
 
     public void validarEmbarque() throws CadastroInvalidoException {
@@ -128,37 +131,43 @@ public class EmbarqueService implements CadastroInterface {
 
         int index = 1;
         for (Embarque embarque : embarques) {
-            System.out.println(index++ + "- " + embarque.getPassageiro().getNome() + " - " + embarque.getParada().getNome());
+            System.out.println(
+                    index++ + "- " + embarque.getPassageiro().getNome() + " - " + embarque.getParada().getNome());
         }
 
         System.out.println("Embarques encontrados: " + embarques.size());
     }
 
     @Override
-    public void salvar(List<?> cadastros) {
-        cadastros = getCadastros();
-        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    public void salvar() {
+        GerenciadorDeDados.salvar(nomeDoArquivo, getCadastros());
     }
 
     @Override
     public void carregar() {
         String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
         
+        try {
+            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
+        }
+        
         try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
             String linha;
 
             while ((linha = reader.readLine()) != null) {
                 String[] dadosEmbarque = linha.split("|");
-                
+
                 Embarque embarque;
                 String[] dadosPassageiro = dadosEmbarque[0].split(";");
                 String cpfPassageiro = dadosPassageiro[1];
-                
+
                 for (Passageiro passageiro : passageiros.getCadastros()) {
                     if (passageiro.getCpf().equals(cpfPassageiro)) {
                         String[] dadosParada = dadosEmbarque[1].split(";");
                         String nomeParada = dadosParada[1];
-                        
+
                         for (Trecho trecho : trechos.getCadastros()) {
                             if (trecho.getOrigem().getNome().equals(nomeParada)) {
                                 embarque = new Embarque(passageiro, trecho.getOrigem());
@@ -167,10 +176,9 @@ public class EmbarqueService implements CadastroInterface {
                         }
                     }
                 }
-            }   
+            }
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de embarques: " + e.getMessage());
         }
     }
-
 }

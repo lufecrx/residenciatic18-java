@@ -1,6 +1,7 @@
 package servicos;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class VeiculoService implements CadastroInterface {
             if(validarPlaca(veiculos, placa)) {
                 Veiculo veiculo = new Veiculo(placa, marca, modelo);
                 veiculos.add(veiculo);
+                salvar();
                 System.out.println("Veiculo cadastrado com sucesso!");
                 return;
             }
@@ -74,14 +76,19 @@ public class VeiculoService implements CadastroInterface {
     }
 
     @Override
-    public void salvar(List<?> cadastros) {
-        cadastros = getCadastros();
-        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    public void salvar() {
+        GerenciadorDeDados.salvar(nomeDoArquivo, getCadastros());
     }
 
     @Override
     public void carregar() {
         String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+
+        try {
+            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
+        }
         
         try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
             String linha;
@@ -100,7 +107,5 @@ public class VeiculoService implements CadastroInterface {
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de veiculos: " + e.getMessage());
         }
-        
     }
-    
 }

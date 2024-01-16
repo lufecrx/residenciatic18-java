@@ -22,6 +22,18 @@ public class App {
     private TrajetoService trajetoService;
     private JornadaService jornadaService;
 
+    public static void main(String[] args) {
+        App app = new App();
+        app.startServices();
+        app.loadData();
+
+        Scanner scanner = new Scanner(System.in);
+        
+        while (app.menuPrincipal(scanner)) {
+            System.out.println();
+        }
+    }
+
     public void startServices() {
         veiculoService = new VeiculoService();
         motoristaService = new MotoristaService();
@@ -31,6 +43,16 @@ public class App {
         embarqueService = new EmbarqueService(trechoService, passageiroService);
         trajetoService = new TrajetoService(trechoService);
         jornadaService = new JornadaService(trajetoService, motoristaService, veiculoService);
+    }
+
+    public void loadData() {
+        veiculoService.carregar();
+        motoristaService.carregar();
+        passageiroService.carregar();
+        trechoService.carregar();
+        embarqueService.carregar();
+        trajetoService.carregar();
+        jornadaService.carregar();
     }
 
     public boolean menuPrincipal(Scanner scanner) {
@@ -155,16 +177,4 @@ public class App {
         }
     }
 
-    public static void main(String[] args) {
-        App app = new App();
-        app.startServices();
-
-        Scanner scanner = new Scanner(System.in);
-        
-        while (app.menuPrincipal(scanner)) {
-            System.out.println();
-        }
-        
-
-    }
 }

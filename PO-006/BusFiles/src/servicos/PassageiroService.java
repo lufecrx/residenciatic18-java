@@ -1,6 +1,7 @@
 package servicos;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +53,9 @@ public class PassageiroService implements CadastroInterface {
             System.out.println("Erro: " + e.getMessage());  
             return;
         }
+
+        System.out.println("Passageiro cadastrado com sucesso!");
+        salvar();
     }
 
     public List<Passageiro> getCadastros() {
@@ -118,14 +122,19 @@ public class PassageiroService implements CadastroInterface {
     }   
     
     @Override
-    public void salvar(List<?> cadastros) {
-        cadastros = getCadastros();
-        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    public void salvar() {
+        GerenciadorDeDados.salvar(nomeDoArquivo, getCadastros());
     }
 
     @Override
     public void carregar() {
         String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+      
+        try {
+            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
+        }
 
         try(BufferedReader reader = new BufferedReader((new FileReader(arquivo)))) {
             String linha;

@@ -1,5 +1,6 @@
 package utils;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,12 @@ public class GerenciadorDeDados {
         } catch (IOException e) {
             System.out.println("Erro ao salvar os dados: " + e.getMessage());
         }
+    }
+
+    public static void criarArquivoInexistente(String arquivo) throws IOException {
+        File file = new File(arquivo); 
+        if(!file.exists())
+            file.createNewFile();
     }
     
 }
