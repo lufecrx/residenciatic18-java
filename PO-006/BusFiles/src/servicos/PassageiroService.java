@@ -1,5 +1,8 @@
 package servicos;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -8,10 +11,12 @@ import entidades.Passageiro;
 import utils.CadastroInterface;
 import utils.CartaoEnum;
 import utils.DuplicataException;
+import utils.GerenciadorDeDados;
 
 public class PassageiroService implements CadastroInterface {
     
     private List<Passageiro> passageiros;
+    private String nomeDoArquivo = "passageiros";
 
     public PassageiroService() {
         this.passageiros = new ArrayList<>();
@@ -49,7 +54,6 @@ public class PassageiroService implements CadastroInterface {
         }
     }
 
-    @Override
     public List<Passageiro> getCadastros() {
         return passageiros;
     }
@@ -111,5 +115,35 @@ public class PassageiroService implements CadastroInterface {
         for (Passageiro passageiro : passageiros) {
             System.out.println("Nome: " + passageiro.getNome() + " | CPF: " + passageiro.getCpf() + " | Cartão: " + passageiro.getCartao() + " | Número do cartão: " + passageiro.getNumCartao());
         }
-    }    
+    }   
+    
+    @Override
+    public void salvar(List<?> cadastros) {
+        cadastros = getCadastros();
+        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    }
+
+    @Override
+    public void carregar() {
+        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+
+        try(BufferedReader reader = new BufferedReader((new FileReader(arquivo)))) {
+            String linha;
+            while(( linha = reader.readLine()) != null) {
+                String[] dados = linha.split(";");
+                
+                if (dados.length == 4) {
+                    String nome = dados[0];
+                    String cpf = dados[1];
+                    CartaoEnum cartao = CartaoEnum.valueOf(dados[2]);
+                    String numCartao = dados[3];
+                    Passageiro passageiro = new Passageiro(nome, cpf, cartao, numCartao);
+                    passageiros.add(passageiro);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar os dados: " + e.getMessage());
+        }
+    }
+
 }

@@ -1,8 +1,9 @@
 package entidades;
 
 import utils.CartaoEnum;
+import utils.RegistroInterface;
 
-public class Passageiro {
+public class Passageiro implements RegistroInterface {
 
     private String nome;
     private String cpf;
@@ -31,5 +32,10 @@ public class Passageiro {
 
     public String getNumCartao() {
         return numCartao;
+    }
+
+    @Override
+    public String toFormattedString() {
+        return nome + ";" + cpf + ";" + cartao + ";" + numCartao;
     }
 }

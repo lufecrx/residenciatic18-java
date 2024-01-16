@@ -38,7 +38,6 @@ public class MotoristaService implements CadastroInterface {
         
     }
 
-    @Override
     public List<Motorista> getCadastros() {
         return motoristas;
     }
@@ -65,4 +64,9 @@ public class MotoristaService implements CadastroInterface {
         }
     }
     
+    @Override
+    public void salvar(List<?> cadastros) {
+        // TODO Auto-generated method stub
+        
+    }
 }

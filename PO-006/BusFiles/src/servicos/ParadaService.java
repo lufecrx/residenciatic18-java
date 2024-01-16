@@ -16,12 +16,23 @@ public class ParadaService {
         this.paradas = new HashSet<>();
     }
 
-    public Parada cadastrar(Scanner scanner) throws DuplicataException, CadastroInvalidoException {
-        Parada novaParada = new Parada(scanner.nextLine());
-        validarParada(novaParada);
-        paradas.add(novaParada);
-        
-        return novaParada;
+    public Parada criar(Scanner scanner) {
+        Parada parada = new Parada(scanner.nextLine());
+        try {
+            validarParada(parada);
+            paradas.add(parada);
+        } catch (DuplicataException | CadastroInvalidoException e) {
+            System.out.println("Erro: " + e.getMessage());
+            return null;
+        }
+        return parada;
+    }
+
+    public Parada criar(String nome) throws DuplicataException, CadastroInvalidoException {
+        Parada parada = new Parada(nome);
+        validarParada(parada);
+        paradas.add(parada);
+        return parada;
     }
 
     public Set<Parada> getCadastros() {

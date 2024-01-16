@@ -3,7 +3,9 @@ package entidades;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Trajeto {
+import utils.RegistroInterface;
+
+public class Trajeto implements RegistroInterface {
     
     private List<Trecho> trechos;
     
@@ -24,5 +26,17 @@ public class Trajeto {
 
     public List<Trecho> getTrechos() {
         return trechos;
+    }
+
+    @Override
+    public String toFormattedString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < trechos.size(); i++) {
+            sb.append(trechos.get(i).toFormattedString());
+            if (i < trechos.size() - 1) {
+                sb.append("|"); // Caractere especial para separar os trechos
+            }
+        }
+        return sb.toString();
     }
 }

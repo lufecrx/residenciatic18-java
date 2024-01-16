@@ -107,8 +107,7 @@ public class JornadaService implements CadastroInterface {
         throw new CadastroInvalidoException("Placa inválida.");
     }
 
-    @Override
-    public List<?> getCadastros() {
+    public List<Jornada> getCadastros() {
         return jornadas;
     }
 

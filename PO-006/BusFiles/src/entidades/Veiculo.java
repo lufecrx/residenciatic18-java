@@ -1,6 +1,8 @@
 package entidades;
 
-public class Veiculo {
+import utils.RegistroInterface;
+
+public class Veiculo implements RegistroInterface {
 
     private String placa;
     private String marca;
@@ -23,4 +25,9 @@ public class Veiculo {
     public String getModelo() {
         return modelo;
     }    
+
+    @Override
+    public String toFormattedString() {
+        return placa + ";" + marca + ";" + modelo;
+    }
 }

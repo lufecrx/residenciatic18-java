@@ -2,7 +2,9 @@ package entidades;
 
 import java.util.List;
 
-public class Jornada {
+import utils.RegistroInterface;
+
+public class Jornada implements RegistroInterface {
     
     private List<Trajeto> trajetos;
     private Motorista motorista;

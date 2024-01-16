@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Parada {
+import utils.RegistroInterface;
+
+public class Parada implements RegistroInterface {
     
     private String nome;
     private List<Passageiro> passageirosEmbarcados;
-    private boolean checkpoint;
 
     public Parada(String nome) {
         this.nome = nome;
@@ -21,10 +22,6 @@ public class Parada {
     
     public String getNome() {
         return nome;
-    }
-
-    public boolean isCheckpoint() {
-        return checkpoint;
     }
 
     public void embarcar(Passageiro passageiro) {
@@ -69,5 +66,10 @@ public class Parada {
 	public int hashCode() {
 		return Objects.hash(nome);
 	}
+
+    @Override
+    public String toFormattedString() {
+        return nome;
+    }
 
 }

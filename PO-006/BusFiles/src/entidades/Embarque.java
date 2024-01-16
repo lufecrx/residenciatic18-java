@@ -1,6 +1,8 @@
 package entidades;
 
-public class Embarque {
+import utils.RegistroInterface;
+
+public class Embarque implements RegistroInterface {
     
     private Passageiro passageiro;
     private Parada parada;

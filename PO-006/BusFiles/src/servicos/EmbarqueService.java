@@ -111,8 +111,7 @@ public class EmbarqueService implements CadastroInterface {
         }
     }
 
-    @Override
-    public List<?> getCadastros() {
+    public List<Embarque> getCadastros() {
         return embarques;
     }
 

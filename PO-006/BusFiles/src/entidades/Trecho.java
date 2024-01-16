@@ -1,6 +1,8 @@
 package entidades;
 
-public class Trecho {
+import utils.RegistroInterface;
+
+public class Trecho implements RegistroInterface {
     
     private Parada origem;
     private Parada destino;
@@ -22,5 +24,10 @@ public class Trecho {
 
     public String getMinutos() {
         return minutos;
+    }
+
+    @Override
+    public String toFormattedString() {
+        return origem.getNome() + ";" + destino.getNome() + ";" + minutos;
     }
 }

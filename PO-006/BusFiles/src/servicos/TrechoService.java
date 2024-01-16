@@ -1,5 +1,8 @@
 package servicos;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -9,12 +12,14 @@ import entidades.Trecho;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
 import utils.DuplicataException;
+import utils.GerenciadorDeDados;
 import utils.ValorInvalidoException;
 
 public class TrechoService implements CadastroInterface{
     
     private List<Trecho> trechos;
     private ParadaService paradaService;
+    private String nomeDoArquivo = "trechos";
 
     public TrechoService(ParadaService paradaService) {
         this.trechos = new ArrayList<>();
@@ -28,16 +33,14 @@ public class TrechoService implements CadastroInterface{
 
         Parada paradaDeOrigem;
         Parada paradaDeDestino;
-        try {
-            System.out.print("Origem: ");
-            paradaDeOrigem = paradaService.cadastrar(scanner);
-            
-            System.out.print("Destino: ");
-            paradaDeDestino = paradaService.cadastrar(scanner);
-        } catch (DuplicataException | CadastroInvalidoException e) {
-            System.out.println("Erro: " + e.getMessage());
-            return;
-        }
+        System.out.print("Origem: ");
+        paradaDeOrigem = paradaService.criar(scanner);;
+        if (paradaDeOrigem == null) { return; }
+        
+        System.out.print("Destino: ");
+        paradaDeDestino = paradaService.criar(scanner);;
+        if (paradaDeDestino == null) { return; }
+
         System.out.print("Minutos: ");
         String minutos;
         minutos = scanner.next();
@@ -51,7 +54,6 @@ public class TrechoService implements CadastroInterface{
    
     }
 
-    @Override
     public List<Trecho> getCadastros() {
         return trechos;
     }
@@ -77,17 +79,53 @@ public class TrechoService implements CadastroInterface{
             throw new ValorInvalidoException("Minutos inválidos");
         }
     }
-
+    
+    @Override
     public void exibir() {
         if(trechos.isEmpty()) {
             System.out.println("Nenhum trecho encontrado.");
             return;
         }
 
+        System.out.println("TRECHOS: ");
         int index = 1;
         for (Trecho trecho : this.trechos) {
             System.out.println(index + "- " + trecho.getOrigem() + " para " + trecho.getDestino());
             index++;
+        }
+    }
+
+    @Override
+    public void salvar(List<?> cadastros) {
+        cadastros = getCadastros();
+        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    }
+
+    @Override
+    public void carregar() {
+        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+            while ((linha = reader.readLine()) != null) {
+                String [] dados = linha.split(";");
+
+                if (dados.length == 3) {
+                    String origem = dados[0];
+                    String destino = dados[1];
+                    String minutos = dados[2];
+                    
+                    Parada paradaOrigem = paradaService.criar(origem);
+                    Parada paradaDestino = paradaService.criar(destino);
+
+                    Trecho trecho = new Trecho(paradaOrigem, paradaDestino, minutos);
+                    trechos.add(trecho);
+                }      
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar os dados: " + e.getMessage());
+        } catch (DuplicataException | CadastroInvalidoException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
     }
 }

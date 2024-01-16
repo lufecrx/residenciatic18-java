@@ -1,6 +1,8 @@
 package entidades;
 
-public class Motorista {
+import utils.RegistroInterface;
+
+public class Motorista implements RegistroInterface {
     
     private String nome;
     private String cnh;
@@ -16,5 +18,10 @@ public class Motorista {
 
     public String getCnh() {
         return cnh;
+    }
+
+    @Override
+    public String toFormattedString() {
+        return nome + ";" + cnh;
     }
 }
