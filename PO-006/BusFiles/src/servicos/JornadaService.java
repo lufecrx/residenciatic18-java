@@ -30,6 +30,11 @@ public class JornadaService implements CadastroInterface {
         
         System.out.println("Cadastrando jornada");
 
+        if (trajetos.getCadastros().isEmpty()) {
+            System.out.println("Cadastre pelo menos um trajeto antes de cadastrar uma jornada.");
+            return;
+        }
+
         System.out.println("Trajetos: ");
         trajetos.exibir();
 

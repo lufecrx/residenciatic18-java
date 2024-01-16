@@ -1,6 +1,8 @@
 package entidades;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Parada {
     
@@ -10,6 +12,7 @@ public class Parada {
 
     public Parada(String nome) {
         this.nome = nome;
+        this.passageirosEmbarcados = new ArrayList<>();
     }
     
     public List<Passageiro> getPassageirosEmbarcados() {
@@ -49,4 +52,22 @@ public class Parada {
             System.out.println("CPF: " + passageiro.getCpf());
         }
     }
+
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Parada other = (Parada) obj;
+		return Objects.equals(nome, other.nome);
+	}
+
+    @Override
+	public int hashCode() {
+		return Objects.hash(nome);
+	}
+
 }

@@ -1,19 +1,19 @@
 package servicos;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import entidades.Parada;
 
 public class ParadaService {
     
-    private List<Parada> paradas;
+    private Set<Parada> paradas;
 
     public ParadaService() {
-        this.paradas = new ArrayList<>();
+        this.paradas = new HashSet<>();
     }
 
-    public List<Parada> getCadastros() {
+    public Set<Parada> getCadastros() {
         return paradas;
     }
 }

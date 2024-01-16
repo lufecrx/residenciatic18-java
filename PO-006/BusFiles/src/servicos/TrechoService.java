@@ -3,6 +3,7 @@ package servicos;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 import entidades.Parada;
 import entidades.Trecho;
@@ -23,7 +24,7 @@ public class TrechoService implements CadastroInterface{
     public void cadastrar(Scanner scanner) {
         
         System.out.println("Cadastrando trecho");
-        List<Parada> paradas = paradaService.getCadastros();
+        Set<Parada> paradas = paradaService.getCadastros();
 
         System.out.println("Origem: ");
         String origem = scanner.nextLine();
@@ -68,7 +69,7 @@ public class TrechoService implements CadastroInterface{
         return trechos;
     }
 
-    public boolean validarParada(List<Parada> paradas, Parada parada) throws DuplicataException{
+    public boolean validarParada(Set<Parada> paradas, Parada parada) throws DuplicataException{
         for (Parada p : paradas) {
             if (p.getNome().equals(parada.getNome())) {
                 throw new DuplicataException("Parada duplicada");
