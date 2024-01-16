@@ -22,10 +22,10 @@ public class PassageiroService implements CadastroInterface {
         
         System.out.println("Cadastrando passageiro");
 
-        System.out.println("Nome: ");
+        System.out.print("Nome: ");
         String nome = scanner.nextLine();
 
-        System.out.println("CPF: ");
+        System.out.print("CPF: ");
         String cpf = scanner.nextLine();
 
         CartaoEnum tipoCartao = null;
@@ -35,7 +35,7 @@ public class PassageiroService implements CadastroInterface {
             tipoCartao = getTipoCartao(scanner);
         } while (tipoCartao == null);
 
-        System.out.println("Número do cartão: ");
+        System.out.print("Número do cartão: ");
         String numCartao = scanner.next();
 
         try {
@@ -60,7 +60,7 @@ public class PassageiroService implements CadastroInterface {
         System.out.println("2 - Idoso");
         System.out.println("3 - Transporte");
         
-        System.out.println("Escolha o tipo: ");
+        System.out.print("Escolha o tipo: ");
         int tipo = scanner.nextInt();
 
         CartaoEnum tipoCartao = null;

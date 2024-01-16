@@ -35,7 +35,7 @@ public class JornadaService implements CadastroInterface {
             return;
         }
 
-        System.out.println("Trajetos: ");
+        System.out.print("Trajetos: ");
         trajetos.exibir();
 
         try {

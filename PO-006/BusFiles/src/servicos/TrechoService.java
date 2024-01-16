@@ -28,16 +28,16 @@ public class TrechoService implements CadastroInterface{
         Parada paradaDeOrigem;
         Parada paradaDeDestino;
         try {
-            System.out.println("Origem: ");
+            System.out.print("Origem: ");
             paradaDeOrigem = paradaService.cadastrar(scanner);
             
-            System.out.println("Destino: ");
+            System.out.print("Destino: ");
             paradaDeDestino = paradaService.cadastrar(scanner);
         } catch (DuplicataException | CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
             return;
         }
-        System.out.println("Minutos: ");
+        System.out.print("Minutos: ");
         int minutos;
         if (scanner.hasNextInt()) {
             minutos = scanner.nextInt();

@@ -22,13 +22,13 @@ public class VeiculoService implements CadastroInterface {
         System.out.println("Cadastrando veiculo");
         
         
-        System.out.println("Marca: ");
+        System.out.print("Marca: ");
         String marca = scanner.nextLine();
         
-        System.out.println("Modelo: ");
+        System.out.print("Modelo: ");
         String modelo = scanner.nextLine();
         
-        System.out.println("Placa: ");
+        System.out.print("Placa: ");
         String placa = scanner.nextLine();
 
         try {

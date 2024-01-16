@@ -21,10 +21,10 @@ public class MotoristaService implements CadastroInterface {
 
         System.out.println("Cadastrando motorista");
         
-        System.out.println("Nome: ");
+        System.out.print("Nome: ");
         String nome = scanner.nextLine();
 
-        System.out.println("CNH: ");
+        System.out.print("CNH: ");
         String cnh = scanner.nextLine();
 
         try {
