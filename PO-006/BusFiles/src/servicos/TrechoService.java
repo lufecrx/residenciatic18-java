@@ -3,11 +3,11 @@ package servicos;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 import entidades.Parada;
 import entidades.Trecho;
 import utils.CadastroInterface;
+import utils.CadastroInvalidoException;
 import utils.DuplicataException;
 
 public class TrechoService implements CadastroInterface{
@@ -24,58 +24,37 @@ public class TrechoService implements CadastroInterface{
     public void cadastrar(Scanner scanner) {
         
         System.out.println("Cadastrando trecho");
-        Set<Parada> paradas = paradaService.getCadastros();
 
-        System.out.println("Origem: ");
-        String origem = scanner.nextLine();
-        Parada paradaDeOrigem = new Parada(origem);
+        Parada paradaDeOrigem;
+        Parada paradaDeDestino;
         try {
-            validarParada(paradas, paradaDeOrigem);    
-        } catch (DuplicataException e) {
+            System.out.println("Origem: ");
+            paradaDeOrigem = paradaService.cadastrar(scanner);
+            
+            System.out.println("Destino: ");
+            paradaDeDestino = paradaService.cadastrar(scanner);
+        } catch (DuplicataException | CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
             return;
         }
-
-        System.out.println("Destino: ");
-        String destino = scanner.nextLine();
-        Parada paradaDeDestino = new Parada(destino);
-        try {
-            validarParada(paradas, paradaDeDestino);
-        } catch (DuplicataException e) {
-            System.out.println("Erro: " + e.getMessage());
-            return;
-        }
-
-        try {
-            validarTrecho(trechos, paradaDeOrigem, paradaDeDestino);
-        } catch (DuplicataException e) {
-            System.out.println("Erro: " + e.getMessage());
-            return;
-        }
-
         System.out.println("Minutos: ");
-        int minutos = scanner.nextInt();
-        
-        if(validarMinutos(minutos)) {
-            Trecho trecho = new Trecho(paradaDeOrigem, paradaDeDestino, minutos);
-            trechos.add(trecho);
-            paradas.add(paradaDeOrigem);
-            paradas.add(paradaDeDestino);
+        int minutos;
+        if (scanner.hasNextInt()) {
+            minutos = scanner.nextInt();
+            if (validarMinutos(minutos)) {
+                Trecho trecho = new Trecho(paradaDeOrigem, paradaDeDestino, minutos);
+                trechos.add(trecho);
+            }
+        } else {
+            System.out.println("Entrada inválida para minutos. Digite um número inteiro válido.");
+            scanner.nextLine();
+            return;
         }
     }
 
     @Override
     public List<Trecho> getCadastros() {
         return trechos;
-    }
-
-    public boolean validarParada(Set<Parada> paradas, Parada parada) throws DuplicataException{
-        for (Parada p : paradas) {
-            if (p.getNome().equals(parada.getNome())) {
-                throw new DuplicataException("Parada duplicada");
-            }
-        }
-        return true;
     }
 
     public boolean validarTrecho(List<Trecho> trechos, Parada paradaDeOrigem, Parada paradaDeDestino) throws DuplicataException{
@@ -87,8 +66,11 @@ public class TrechoService implements CadastroInterface{
         return true;
     }
 
-    public boolean validarMinutos(int minutos) {
-        return minutos > 0;
+    public boolean validarMinutos(int minutos) throws IllegalArgumentException {
+        if (minutos <= 0) {
+            throw new IllegalArgumentException("Minutos inválidos");
+        }
+        return true;
     }
 
     public void exibir() {

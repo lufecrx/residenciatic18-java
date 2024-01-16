@@ -69,6 +69,7 @@ public class App {
 
         System.out.print("Insira o número da opção desejada: ");
         String opcao = scanner.next();
+        scanner.nextLine();
 
         switch (opcao) {
             case "1":
