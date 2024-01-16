@@ -34,6 +34,22 @@ public class Passageiro implements RegistroInterface {
         return numCartao;
     }
 
+    public void setCartao(CartaoEnum cartao) {
+        this.cartao = cartao;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setNumCartao(String numCartao) {
+        this.numCartao = numCartao;
+    }
+
     @Override
     public String toString() {
         return nome + ";" + cpf + ";" + cartao + ";" + numCartao;

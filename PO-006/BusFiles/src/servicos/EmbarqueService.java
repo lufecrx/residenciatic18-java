@@ -1,7 +1,6 @@
 package servicos;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,6 +15,7 @@ import entidades.Trecho;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
 import utils.GerenciadorDeDados;
+import utils.ListaVaziaException;
 
 public class EmbarqueService implements CadastroInterface {
 
@@ -44,11 +44,11 @@ public class EmbarqueService implements CadastroInterface {
         Parada paradaDeOrigem = null;
         Passageiro passageiroAssociado = null;
 
-        System.out.println("Trechos: ");
-        trechos.exibir();
-
-        int trechoIdx;
+        
+        int trechoIdx = -1;
         try {
+            System.out.println("Trechos: ");
+            trechos.exibir();
             System.out.print(
                     "Selecione o número correspondente do trecho (parada de origem) para associar ao embarque: ");
             trechoIdx = scanner.nextInt();
@@ -60,6 +60,9 @@ public class EmbarqueService implements CadastroInterface {
         } catch (CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
             return;
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+            return;
         }
 
         Trecho trechoSelecionado = trechos.getCadastros().get(trechoIdx - 1);
@@ -67,12 +70,12 @@ public class EmbarqueService implements CadastroInterface {
 
         System.out.println("Trecho selecionado: " + trechoSelecionado);
         System.out.println("Parada de origem selecionada: " + paradaDeOrigem.getNome());
-
-        System.out.println("Passageiros: ");
-        passageiros.exibir();
-
-        int passageiroIdx;
+        
+        
+        int passageiroIdx = -1;
         try {
+            System.out.println("Passageiros: ");
+            passageiros.exibir();
             System.out.print("Selecione o número correspondente do passageiro para associar ao embarque: ");
             passageiroIdx = scanner.nextInt();
             validarPassageiroIdx(passageiroIdx);
@@ -82,6 +85,9 @@ public class EmbarqueService implements CadastroInterface {
             return;
         } catch (CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
+            return;
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -124,10 +130,51 @@ public class EmbarqueService implements CadastroInterface {
     }
 
     @Override
-    public void exibir() {
-        if (embarques.isEmpty()) {
-            System.out.println("Nenhum embarque encontrado.");
+    public void alterar(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Alterando embarque");
+
+        exibir();
+
+        int index = -1;
+        try {
+            System.out.print("Selecione o número correspondente ao embarque que deseja alterar: ");
+            index = scanner.nextInt();
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para embarque");
+            return;
         }
+
+        if (index > 0 && index <= embarques.size()) {
+            System.out.println("Embarque selecionado: " + embarques.get(index - 1).toString());
+            try {
+                System.out.println("Novo passageiro: ");
+                passageiros.exibir();
+                System.out.println("Selecione o número correspondente do passageiro para associar ao embarque: ");
+                int passageiroIdx = scanner.nextInt();
+                embarques.get(index - 1).setPassageiro(passageiros.getCadastros().get(passageiroIdx - 1));
+                
+                System.out.println("Nova parada de origem: ");
+                trechos.exibir();
+                System.out.println("Selecione o número correspondente do trecho para associar ao embarque: ");
+                int trechoIdx = scanner.nextInt();
+                embarques.get(index - 1).setParada(trechos.getCadastros().get(trechoIdx - 1).getOrigem());
+            } catch (InputMismatchException e) {
+                System.out.println("Erro: Entrada inválida");
+                return;
+            }
+
+            System.out.println("Embarque alterado com sucesso!");
+            salvar();
+        }
+
+    }
+
+    @Override
+    public void exibir() throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
 
         int index = 1;
         for (Embarque embarque : embarques) {
@@ -146,13 +193,13 @@ public class EmbarqueService implements CadastroInterface {
     @Override
     public void carregar() {
         String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
-        
+
         try {
             GerenciadorDeDados.criarArquivoInexistente(arquivo);
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
-        
+
         try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
             String linha;
 

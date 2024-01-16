@@ -24,6 +24,10 @@ public class Parada implements RegistroInterface {
         return nome;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
     public void embarcar(Passageiro passageiro) {
         this.passageirosEmbarcados.add(passageiro);
     }

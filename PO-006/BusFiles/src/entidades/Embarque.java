@@ -21,6 +21,14 @@ public class Embarque implements RegistroInterface {
         return parada;
     }
 
+    public void setPassageiro(Passageiro passageiro) {
+        this.passageiro = passageiro;
+    }
+
+    public void setParada(Parada parada) {
+        this.parada = parada;
+    }
+
     @Override
     public String toString() {
         return passageiro.toString() + "|" + parada.toString();

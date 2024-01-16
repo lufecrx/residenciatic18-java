@@ -26,6 +26,14 @@ public class Veiculo implements RegistroInterface {
         return modelo;
     }    
 
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
     @Override
     public String toString() {
         return placa + ";" + marca + ";" + modelo;

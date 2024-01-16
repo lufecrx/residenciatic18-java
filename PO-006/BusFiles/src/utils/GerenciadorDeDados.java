@@ -42,7 +42,12 @@ public class GerenciadorDeDados {
         if (!file.exists()) {
             file.createNewFile();
         }
+    }
 
+    public static void estaVazio(List<?> cadastros, String nome) throws ListaVaziaException {
+        if (cadastros.isEmpty()) {
+            throw new ListaVaziaException("Nenhum cadastro de " + nome + " encontrado.");
+        }
     }
     
 }

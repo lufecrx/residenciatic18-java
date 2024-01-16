@@ -20,6 +20,14 @@ public class Motorista implements RegistroInterface {
         return cnh;
     }
 
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setCnh(String cnh) {
+        this.cnh = cnh;
+    }
+
     @Override
     public String toString() {
         return nome + ";" + cnh;

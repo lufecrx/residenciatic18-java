@@ -26,6 +26,10 @@ public class Trecho implements RegistroInterface {
         return minutos;
     }
 
+    public void setMinutos(String minutos) {
+        this.minutos = minutos;
+    }
+
     @Override
     public String toString() {
         return origem.getNome() + ";" + destino.getNome() + ";" + minutos;

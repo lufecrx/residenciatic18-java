@@ -12,6 +12,7 @@ import entidades.Trajeto;
 import entidades.Trecho;
 import utils.CadastroInterface;
 import utils.GerenciadorDeDados;
+import utils.ListaVaziaException;
 
 public class TrajetoService implements CadastroInterface{
     
@@ -60,15 +61,31 @@ public class TrajetoService implements CadastroInterface{
         salvar();
     }
 
+    @Override
+    public void alterar(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Alterando trajeto");
+
+        exibir();
+        System.out.println("Selecione o numero correspondente ao trajeto que deseja alterar: ");
+        int index = scanner.nextInt();
+
+        System.out.println("Trajeto selecionado: " + trajetos.get(index - 1).toString());
+
+        
+        System.out.println("Deseja adicionar ou remover trechos?");
+        System.out.println("1 - Adicionar");
+        System.out.println("2 - Remover");
+        int opcao = scanner.nextInt();
+    }
+
     public List<Trajeto> getCadastros() {
         return trajetos;
     }
 
-    public void exibir() {
-        if(this.trajetos.isEmpty()) {
-            System.out.println("Nenhum trajeto encontrado.");
-            return;
-        }
+    public void exibir() throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
 
         int index = 1;
         for (Trajeto trajeto : this.trajetos) {

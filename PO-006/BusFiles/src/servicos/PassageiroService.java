@@ -12,6 +12,7 @@ import utils.CadastroInterface;
 import utils.CartaoEnum;
 import utils.DuplicataException;
 import utils.GerenciadorDeDados;
+import utils.ListaVaziaException;
 
 public class PassageiroService implements CadastroInterface {
     
@@ -55,6 +56,74 @@ public class PassageiroService implements CadastroInterface {
 
         System.out.println("Passageiro cadastrado com sucesso!");
         salvar();
+    }
+
+    @Override
+    public void alterar(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Alterando passageiro");
+
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+
+        try {
+            for (Passageiro passageiro : passageiros) {
+                if (passageiro.getCpf().equals(cpf)) {
+                    System.out.print("Novo nome: ");
+                    String novoNome = scanner.nextLine();
+    
+                    System.out.print("Novo CPF: ");
+                    String novoCpf = scanner.nextLine();
+                    validarCpf(passageiros, novoCpf);
+    
+                    CartaoEnum novoTipoCartao = null;
+    
+                    do {
+                        // Perguntar o tipo de cartão até ser inserido um tipo válido
+                        novoTipoCartao = getTipoCartao(scanner);
+                    } while (novoTipoCartao == null);
+    
+                    System.out.print("Novo número do cartão: ");
+                    String novoNumCartao = scanner.next();
+                    validarNumCartao(passageiros, novoNumCartao);
+                    
+                    passageiro.setNome(novoNome);
+                    passageiro.setCpf(novoCpf);
+                    passageiro.setCartao(novoTipoCartao);
+                    passageiro.setNumCartao(novoNumCartao);
+
+                    System.out.println("Passageiro alterado com sucesso!");
+                    salvar();
+                    return;
+                }
+            }
+        } catch (DuplicataException e) {
+            System.out.println("Erro: " + e.getMessage());
+            return;
+        }
+
+        System.out.println("Passageiro não encontrado!");
+    }
+
+    @Override
+    public void excluir(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Excluindo passageiro");
+
+        System.out.print("CPF: ");
+        String cpf = scanner.nextLine();
+
+        for (Passageiro passageiro : passageiros) {
+            if (passageiro.getCpf().equals(cpf)) {
+                passageiros.remove(passageiro);
+                System.out.println("Passageiro excluído com sucesso!");
+                salvar();
+                return;
+            }
+        }
+        System.out.println("Passageiro não encontrado.");
     }
 
     public List<Passageiro> getCadastros() {
@@ -109,11 +178,8 @@ public class PassageiroService implements CadastroInterface {
     }  
 
     @Override
-    public void exibir() {
-        if(passageiros.isEmpty()) {
-            System.out.println("Nenhum passageiro encontrado");
-            return;
-        }
+    public void exibir() throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
 
         for (Passageiro passageiro : passageiros) {
             System.out.println("Nome: " + passageiro.getNome() + " | CPF: " + passageiro.getCpf() + " | Cartão: " + passageiro.getCartao() + " | Número do cartão: " + passageiro.getNumCartao());

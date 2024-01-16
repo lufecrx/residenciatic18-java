@@ -11,6 +11,7 @@ import entidades.Motorista;
 import utils.CadastroInterface;
 import utils.DuplicataException;
 import utils.GerenciadorDeDados;
+import utils.ListaVaziaException;
 
 public class MotoristaService implements CadastroInterface {
 
@@ -39,10 +40,63 @@ public class MotoristaService implements CadastroInterface {
             }
         } catch (DuplicataException e) {
             System.out.println("Erro: " + e.getMessage());
+            return;
         }
 
         System.out.println("Motorista cadastrado com sucesso!");
         salvar();
+    }
+
+    @Override
+    public void alterar(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Alterando motorista");
+
+        System.out.print("CNH: ");
+        String cnh = scanner.nextLine();
+
+        for (Motorista motorista : motoristas) {
+            if (motorista.getCnh().equals(cnh)) {
+                System.out.print("Novo nome: ");
+                String novoNome = scanner.nextLine();
+
+                System.out.print("Nova CNH: ");
+                String novaCnh = scanner.nextLine();
+                try {
+                    if (validarCnh(motoristas, novaCnh)) {
+                        motorista.setNome(novoNome);
+                        motorista.setCnh(novaCnh);
+                    } 
+                } catch (DuplicataException e) {
+                    System.out.println("Erro: " + e.getMessage());
+                    return;
+                }
+            }
+        }
+
+        System.out.println("Motorista alterado com sucesso!");
+        salvar();
+    }
+
+    @Override
+    public void excluir(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Excluindo motorista");
+
+        System.out.print("CNH: ");
+        String cnh = scanner.nextLine();
+
+        for (Motorista motorista : motoristas) {
+            if (motorista.getCnh().equals(cnh)) {
+                motoristas.remove(motorista);
+                System.out.println("Motorista excluído com sucesso!");
+                salvar();
+                return;
+            }
+        }
+        System.out.println("Motorista não encontrado.");
     }
 
     public List<Motorista> getCadastros() {

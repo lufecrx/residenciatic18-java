@@ -11,6 +11,7 @@ import entidades.Veiculo;
 import utils.CadastroInterface;
 import utils.DuplicataException;
 import utils.GerenciadorDeDados;
+import utils.ListaVaziaException;
 
 public class VeiculoService implements CadastroInterface {
 
@@ -61,13 +62,63 @@ public class VeiculoService implements CadastroInterface {
         }
         return true;
     }
+
+    @Override
+    public void alterar(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Alterando veiculo");
+
+        System.out.print("Placa: ");
+        String placa = scanner.nextLine();
+
+        for (Veiculo veiculo : veiculos) {
+            if (veiculo.getPlaca().equals(placa)) {
+                System.out.print("Nova marca: ");
+                String novaMarca = scanner.nextLine();
+
+                System.out.print("Novo modelo: ");
+                String novoModelo = scanner.nextLine();
+
+                veiculo.setMarca(novaMarca);
+                veiculo.setModelo(novoModelo);
+
+                System.out.println("Veiculo alterado com sucesso!");
+                salvar();
+            }
+        }
+    }
+
+    @Override
+    public void excluir(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        if(veiculos.isEmpty()) {
+            System.out.println("Não foi cadastrado nenhum veiculo.");
+            return; 
+        }
+
+        System.out.println("Excluindo veiculo");
+
+        System.out.print("Placa: ");
+        String placa = scanner.nextLine();
+
+        for (Veiculo veiculo : veiculos) {
+            if (veiculo.getPlaca().equals(placa)) {
+                veiculos.remove(veiculo);
+
+                System.out.println("Veiculo excluído com sucesso!");
+                salvar();
+                return;
+            }
+        }
+        
+        System.out.println("Veiculo não encontrado.");
+    }
     
     @Override
-    public void exibir() {
-        if(veiculos.isEmpty()) {
-            System.out.println("Nenhum veiculo encontrado");
-            return;
-        }
+    public void exibir() throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
 
         for (Veiculo veiculo : veiculos) {
             System.out.println("Placa: " + veiculo.getPlaca() + " | Marca: " + veiculo.getMarca() + " | Modelo: " + veiculo.getModelo());

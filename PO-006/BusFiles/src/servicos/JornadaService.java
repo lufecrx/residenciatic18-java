@@ -15,6 +15,7 @@ import entidades.Veiculo;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
 import utils.GerenciadorDeDados;
+import utils.ListaVaziaException;
 
 public class JornadaService implements CadastroInterface {
     
@@ -122,10 +123,8 @@ public class JornadaService implements CadastroInterface {
     }
 
     @Override
-    public void exibir() {
-        if(this.jornadas.isEmpty()) {
-            System.out.println("Nenhuma jornada encontrada.");
-        }
+    public void exibir() throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
 
         int index = 1;
         for (Jornada jornada : this.jornadas) {
