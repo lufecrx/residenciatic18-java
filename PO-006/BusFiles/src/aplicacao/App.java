@@ -2,6 +2,7 @@ package aplicacao;
 
 import java.util.Scanner;
 
+import servicos.EmbarqueService;
 import servicos.JornadaService;
 import servicos.MotoristaService;
 import servicos.ParadaService;
@@ -17,6 +18,7 @@ public class App {
     private ParadaService paradaService;
     private PassageiroService passageiroService;
     private TrechoService trechoService;
+    private EmbarqueService embarqueService;
     private TrajetoService trajetoService;
     private JornadaService jornadaService;
 
@@ -26,7 +28,8 @@ public class App {
         paradaService = new ParadaService();
         passageiroService = new PassageiroService();
         trechoService = new TrechoService(paradaService);
-        trajetoService = new TrajetoService(trechoService, passageiroService);
+        embarqueService = new EmbarqueService(trechoService, passageiroService);
+        trajetoService = new TrajetoService(trechoService);
         jornadaService = new JornadaService(trajetoService, motoristaService, veiculoService);
     }
 
@@ -65,6 +68,7 @@ public class App {
         System.out.println("4 - Cadastrar passageiro");
         System.out.println("6 - Cadastrar trecho");
         System.out.println("7 - Cadastrar trajeto");
+        System.out.println("8 - Cadastrar embarque");
         System.out.println("0 - Sair");
 
         System.out.print("Insira o número da opção desejada: ");
@@ -89,6 +93,9 @@ public class App {
                 break;
             case "7":
                 trajetoService.cadastrar(scanner);
+                break;
+            case "8":
+                embarqueService.cadastrar(scanner);
                 break;
             case "0":
                 System.out.println("Saindo...");
