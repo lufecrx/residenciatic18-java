@@ -1,16 +1,16 @@
 package entidades;
 
-import utils.Cartao;
+import utils.CartaoEnum;
 
 public class Passageiro {
 
     private String nome;
     private String cpf;
-    private Cartao cartao;
+    private CartaoEnum cartao;
     private String numCartao;
 
 
-    public Passageiro(String nome, String cpf, Cartao cartao, String numCartao) {
+    public Passageiro(String nome, String cpf, CartaoEnum cartao, String numCartao) {
         this.nome = nome;
         this.cpf = cpf;
         this.cartao = cartao;
@@ -25,7 +25,7 @@ public class Passageiro {
         return cpf;
     }
 
-    public Cartao getCartao() {
+    public CartaoEnum getCartao() {
         return cartao;
     }
 

@@ -1,6 +1,6 @@
 package utils;
 
-public enum Cartao {
+public enum CartaoEnum {
     
     ESTUDANTIL, IDOSO, TRANSPORTE
 }

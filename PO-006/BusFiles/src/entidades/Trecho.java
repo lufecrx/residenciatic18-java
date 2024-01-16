@@ -23,24 +23,4 @@ public class Trecho {
     public int getMinutos() {
         return minutos;
     }
-
-    public void setOrigem(PontosDeParada pontos, int index) {
-        this.origem = pontos.getParada(index);
-    }
-
-    public void setDestino(PontosDeParada pontos, int index) {
-        this.destino = pontos.getParada(index);
-    }
-
-    public void setOrigem(Parada origem) {
-        this.origem = origem;
-    }
-
-    public void setDestino(Parada destino) {
-        this.destino = destino;
-    }
-
-    public void setMinutos(int minutos) {
-        this.minutos = minutos;
-    }
 }

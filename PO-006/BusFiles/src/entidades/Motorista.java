@@ -17,5 +17,4 @@ public class Motorista {
     public String getCnh() {
         return cnh;
     }
-
 }

@@ -22,6 +22,5 @@ public class Veiculo {
 
     public String getModelo() {
         return modelo;
-    }
-    
+    }    
 }

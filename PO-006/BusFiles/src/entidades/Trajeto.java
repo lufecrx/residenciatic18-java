@@ -21,4 +21,8 @@ public class Trajeto {
             System.out.println(index++ +  "- " + trecho.getOrigem() + " para " + trecho.getDestino());
         }
     }
+
+    public List<Trecho> getTrechos() {
+        return trechos;
+    }
 }
