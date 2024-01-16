@@ -21,4 +21,9 @@ public class Embarque implements RegistroInterface {
         return parada;
     }
 
+    @Override
+    public String toFormattedString() {
+        return passageiro.toFormattedString() + "|" + parada.toFormattedString();
+    }
+
 }

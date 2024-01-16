@@ -1,5 +1,8 @@
 package servicos;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,9 +10,11 @@ import java.util.Scanner;
 import entidades.Jornada;
 import entidades.Motorista;
 import entidades.Trajeto;
+import entidades.Trecho;
 import entidades.Veiculo;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
+import utils.GerenciadorDeDados;
 
 public class JornadaService implements CadastroInterface {
     
@@ -17,6 +22,7 @@ public class JornadaService implements CadastroInterface {
     private TrajetoService trajetos;
     private MotoristaService motoristas;
     private VeiculoService veiculos;
+    private String nomeDoArquivo = "jornadas";
 
     public JornadaService(TrajetoService trajetoService, MotoristaService motoristaService, VeiculoService veiculoService) {
         this.jornadas = new ArrayList<>();
@@ -126,4 +132,59 @@ public class JornadaService implements CadastroInterface {
         }
     }
 
+    @Override
+    public void salvar(List<?> cadastros) {
+        cadastros = getCadastros();
+        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    }
+
+    @Override
+    public void carregar() {
+        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+
+            while ((linha = reader.readLine()) != null) {
+                String[] dados = linha.split("//");
+                
+                List<Trajeto> listaDeTrajetos = new ArrayList<>();
+                // Construir trajeto
+                String[] dadosTrajeto = dados[0].split("|");
+                for (String trecho : dadosTrajeto) {
+                    String[] dadosTrecho = trecho.split(";");
+                    String origem = dadosTrecho[0];
+                    String destino = dadosTrecho[1];
+
+                    // Procurar trecho no cadastro de trechos
+                    for (Trajeto trajetoCadastrado : trajetos.getCadastros()) {
+                        for (Trecho trechoCadastrado : trajetoCadastrado.getTrechos()) {
+                            if (trechoCadastrado.getOrigem().getNome().equals(origem) && trechoCadastrado.getDestino().getNome().equals(destino)) {
+                                listaDeTrajetos.add(trajetoCadastrado);
+                            }
+                        }
+                    }
+                }
+                
+                String motorista = dados[1];
+                String veiculo = dados[2];
+
+                // Procurar motorista no cadastro de motoristas
+                for (Motorista motoristaCadastrado : motoristas.getCadastros()) {
+                    if (motoristaCadastrado.getNome().equals(motorista)) {
+                        // Procurar veiculo no cadastro de veiculo
+                        for (Veiculo veiculoCadastrado : veiculos.getCadastros()) {
+                            if (veiculoCadastrado.getPlaca().equals(veiculo)) {
+                                Jornada jornada = new Jornada(listaDeTrajetos, motoristaCadastrado, veiculoCadastrado); 
+                                this.jornadas.add(jornada);                               
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo de jornadas: " + e.getMessage());
+        }
+        
+    }
 }

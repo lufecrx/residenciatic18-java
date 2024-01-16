@@ -1,5 +1,8 @@
 package servicos;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -7,10 +10,12 @@ import java.util.Scanner;
 import entidades.Motorista;
 import utils.CadastroInterface;
 import utils.DuplicataException;
+import utils.GerenciadorDeDados;
 
 public class MotoristaService implements CadastroInterface {
     
     private List<Motorista> motoristas;
+    private String nomeDoArquivo = "motoristas";
 
     public MotoristaService() {
         this.motoristas = new ArrayList<>();
@@ -66,7 +71,30 @@ public class MotoristaService implements CadastroInterface {
     
     @Override
     public void salvar(List<?> cadastros) {
-        // TODO Auto-generated method stub
-        
+        cadastros = getCadastros();
+        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);                
+    }
+
+    @Override
+    public void carregar() {
+        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+
+            while ((linha = reader.readLine()) != null) {
+                String[] dados = linha.split(";");
+
+                if (dados.length == 2) {
+                    String nome = dados[0];
+                    String cnh = dados[1];
+
+                    Motorista motorista = new Motorista(nome, cnh);
+                    motoristas.add(motorista);
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo de motoristas: " + e.getMessage());
+        }
     }
 }

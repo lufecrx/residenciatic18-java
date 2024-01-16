@@ -1,5 +1,8 @@
 package servicos;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -11,12 +14,14 @@ import entidades.Passageiro;
 import entidades.Trecho;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
+import utils.GerenciadorDeDados;
 
 public class EmbarqueService implements CadastroInterface {
 
     private List<Embarque> embarques;
     private TrechoService trechos;
     private PassageiroService passageiros;
+    private String nomeDoArquivo = "embarques";
 
     public EmbarqueService(TrechoService trechos, PassageiroService passageiros) {
         this.embarques = new ArrayList<>();
@@ -127,6 +132,45 @@ public class EmbarqueService implements CadastroInterface {
         }
 
         System.out.println("Embarques encontrados: " + embarques.size());
+    }
+
+    @Override
+    public void salvar(List<?> cadastros) {
+        cadastros = getCadastros();
+        GerenciadorDeDados.salvar(nomeDoArquivo, cadastros);
+    }
+
+    @Override
+    public void carregar() {
+        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+        
+        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
+            String linha;
+
+            while ((linha = reader.readLine()) != null) {
+                String[] dadosEmbarque = linha.split("|");
+                
+                Embarque embarque;
+                String[] dadosPassageiro = dadosEmbarque[0].split(";");
+                String cpfPassageiro = dadosPassageiro[1];
+                
+                for (Passageiro passageiro : passageiros.getCadastros()) {
+                    if (passageiro.getCpf().equals(cpfPassageiro)) {
+                        String[] dadosParada = dadosEmbarque[1].split(";");
+                        String nomeParada = dadosParada[1];
+                        
+                        for (Trecho trecho : trechos.getCadastros()) {
+                            if (trecho.getOrigem().getNome().equals(nomeParada)) {
+                                embarque = new Embarque(passageiro, trecho.getOrigem());
+                                embarques.add(embarque);
+                            }
+                        }
+                    }
+                }
+            }   
+        } catch (IOException e) {
+            System.out.println("Erro ao carregar o arquivo de embarques: " + e.getMessage());
+        }
     }
 
 }

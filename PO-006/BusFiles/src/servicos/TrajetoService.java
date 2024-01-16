@@ -130,7 +130,7 @@ public class TrajetoService implements CadastroInterface{
                 }
             }
         } catch (IOException e) {
-            System.out.println("Erro ao carregar arquivos: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de trajetos: " + e.getMessage());
         }
     }
 }

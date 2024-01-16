@@ -27,4 +27,9 @@ public class Jornada implements RegistroInterface {
     public Veiculo getVeiculo() {
         return veiculo;
     }
+
+    @Override
+    public String toFormattedString() {
+        return trajetos.toString() + "//" + motorista.toFormattedString() + "//" + veiculo.toFormattedString();
+    }
 }

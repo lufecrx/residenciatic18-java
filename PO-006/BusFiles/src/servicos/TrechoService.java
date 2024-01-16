@@ -123,7 +123,7 @@ public class TrechoService implements CadastroInterface{
                 }      
             }
         } catch (IOException e) {
-            System.out.println("Erro ao carregar os dados: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de trechos: " + e.getMessage());
         } catch (DuplicataException | CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
         }

@@ -98,7 +98,7 @@ public class VeiculoService implements CadastroInterface {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Erro ao carregar os dados: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de veiculos: " + e.getMessage());
         }
         
     }
