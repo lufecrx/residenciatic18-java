@@ -9,6 +9,7 @@ import entidades.Trecho;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
 import utils.DuplicataException;
+import utils.ValorInvalidoException;
 
 public class TrechoService implements CadastroInterface{
     
@@ -38,18 +39,16 @@ public class TrechoService implements CadastroInterface{
             return;
         }
         System.out.print("Minutos: ");
-        int minutos;
-        if (scanner.hasNextInt()) {
-            minutos = scanner.nextInt();
-            if (validarMinutos(minutos)) {
-                Trecho trecho = new Trecho(paradaDeOrigem, paradaDeDestino, minutos);
-                trechos.add(trecho);
-            }
-        } else {
-            System.out.println("Entrada inválida para minutos. Digite um número inteiro válido.");
-            scanner.nextLine();
-            return;
+        String minutos;
+        minutos = scanner.next();
+        try {
+            validarMinutos(minutos);
+        } catch (ValorInvalidoException e) {
+            System.out.println("Erro: " + e.getMessage());
         }
+        Trecho trecho = new Trecho(paradaDeOrigem, paradaDeDestino, minutos);
+        trechos.add(trecho);
+   
     }
 
     @Override
@@ -66,11 +65,17 @@ public class TrechoService implements CadastroInterface{
         return true;
     }
 
-    public boolean validarMinutos(int minutos) throws IllegalArgumentException {
-        if (minutos <= 0) {
-            throw new IllegalArgumentException("Minutos inválidos");
+    public void validarMinutos(String min) throws ValorInvalidoException {
+        try {
+            Integer.parseInt(min);
+        } catch (NumberFormatException e) {
+            throw new ValorInvalidoException("Entrada inválida para minutos. Digite um número inteiro válido.");
         }
-        return true;
+
+        int minutos = Integer.parseInt(min);
+        if (minutos <= 0) {
+            throw new ValorInvalidoException("Minutos inválidos");
+        }
     }
 
     public void exibir() {

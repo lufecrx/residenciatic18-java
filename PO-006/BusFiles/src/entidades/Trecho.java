@@ -4,9 +4,9 @@ public class Trecho {
     
     private Parada origem;
     private Parada destino;
-    private int minutos;
+    private String minutos;
 
-    public Trecho(Parada origem, Parada destino, int minutos) {
+    public Trecho(Parada origem, Parada destino, String minutos) {
         this.origem = origem;
         this.destino = destino;
         this.minutos = minutos;
@@ -20,7 +20,7 @@ public class Trecho {
         return destino;
     }
 
-    public int getMinutos() {
+    public String getMinutos() {
         return minutos;
     }
 }

@@ -115,6 +115,7 @@ public class App {
         System.out.println("5 - Consultar trechos");
         System.out.println("6 - Consultar trajetos");
         System.out.println("7 - Consultar jornadas");
+        System.out.println("8 - Consultar embarques");
         System.out.println("0 - Sair");
 
         System.out.print("Insira o número da opção desejada: ");
@@ -141,6 +142,9 @@ public class App {
                 break;
             case "7":
                 jornadaService.exibir();
+                break;
+            case "8":
+                embarqueService.exibir();
                 break;
             case "0":
                 System.out.println("Saindo...");
