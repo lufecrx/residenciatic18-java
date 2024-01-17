@@ -97,9 +97,9 @@ public class App {
         System.out.println("2 - Cadastrar motorista");
         System.out.println("3 - Cadastrar veiculo");
         System.out.println("4 - Cadastrar passageiro");
-        System.out.println("6 - Cadastrar trecho");
-        System.out.println("7 - Cadastrar trajeto");
-        System.out.println("8 - Cadastrar embarque");
+        System.out.println("5 - Cadastrar trecho");
+        System.out.println("6 - Cadastrar trajeto");
+        System.out.println("7 - Cadastrar embarque");
         System.out.println("0 - Sair");
 
         System.out.print("Insira o número da opção desejada: ");
@@ -119,13 +119,13 @@ public class App {
             case "4":
                 passageiroService.cadastrar(scanner);
                 break;
-            case "6":
+            case "5":
                 trechoService.cadastrar(scanner);
                 break;
-            case "7":
+            case "6":
                 trajetoService.cadastrar(scanner);
                 break;
-            case "8":
+            case "7":
                 embarqueService.cadastrar(scanner);
                 break;
             case "0":
@@ -138,6 +138,9 @@ public class App {
     }
 
     public void menuConsulta(Scanner scanner) {
+
+
+        
         System.out.println("Selecione uma opção:");
         System.out.println("1 - Consultar jornadas");
         System.out.println("2 - Consultar motoristas");
@@ -145,8 +148,7 @@ public class App {
         System.out.println("4 - Consultar passageiros");
         System.out.println("5 - Consultar trechos");
         System.out.println("6 - Consultar trajetos");
-        System.out.println("7 - Consultar jornadas");
-        System.out.println("8 - Consultar embarques");
+        System.out.println("7 - Consultar embarques");
         System.out.println("0 - Sair");
 
         System.out.print("Insira o número da opção desejada: ");
@@ -173,9 +175,6 @@ public class App {
                     trajetoService.exibir();
                     break;
                 case "7":
-                    jornadaService.exibir();
-                    break;
-                case "8":
                     embarqueService.exibir();
                     break;
                 case "0":
@@ -198,8 +197,7 @@ public class App {
         System.out.println("4 - Alterar passageiros");
         System.out.println("5 - Alterar trechos");
         System.out.println("6 - Alterar trajetos");
-        System.out.println("7 - Alterar jornadas");
-        System.out.println("8 - Alterar embarques");
+        System.out.println("7 - Alterar embarques");
         System.out.println("0 - Sair");
 
         System.out.println("Insira o número da opção desejada: ");
@@ -226,9 +224,6 @@ public class App {
                     trajetoService.alterar(scanner);
                     break;
                 case "7":
-                    jornadaService.alterar(scanner);
-                    break;
-                case "8":
                     embarqueService.alterar(scanner);
                     break;
                 case "0":
@@ -251,8 +246,7 @@ public class App {
         System.out.println("4 - Excluir passageiros");
         System.out.println("5 - Excluir trechos");
         System.out.println("6 - Excluir trajetos");
-        System.out.println("7 - Excluir jornadas");
-        System.out.println("8 - Excluir embarques");
+        System.out.println("7 - Excluir embarques");
         System.out.println("0 - Sair");
 
         System.out.println("Insira o número da opção desejada: ");
@@ -279,9 +273,6 @@ public class App {
                     trajetoService.excluir(scanner);
                     break;
                 case "7":
-                    jornadaService.excluir(scanner);
-                    break;
-                case "8":
                     embarqueService.excluir(scanner);
                     break;
                 case "0":
