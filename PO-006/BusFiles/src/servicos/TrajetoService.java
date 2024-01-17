@@ -228,7 +228,7 @@ public class TrajetoService implements CadastroInterface {
         try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
             String linha;
             while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split("|");
+                String[] dados = linha.split("\\|");
 
                 Trajeto trajeto = new Trajeto();
                 for (String trechoDados : dados) {
