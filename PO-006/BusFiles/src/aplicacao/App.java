@@ -10,6 +10,7 @@ import servicos.PassageiroService;
 import servicos.TrajetoService;
 import servicos.TrechoService;
 import servicos.VeiculoService;
+import utils.ListaVaziaException;
 
 public class App {
     
@@ -143,37 +144,41 @@ public class App {
         System.out.print("Insira o número da opção desejada: ");
         String opcao = scanner.next();
         
-        switch (opcao) {
-            case "1":
-                jornadaService.exibir();
-                break;
-            case "2":
-                motoristaService.exibir();
-                break;
-            case "3":
-                veiculoService.exibir();
-                break;
-            case "4":  
-                passageiroService.exibir();
-                break;
-            case "5":  
-                trechoService.exibir();
-                break;
-            case "6":   
-                trajetoService.exibir();
-                break;
-            case "7":
-                jornadaService.exibir();
-                break;
-            case "8":
-                embarqueService.exibir();
-                break;
-            case "0":
-                System.out.println("Saindo...");
-                break;  
-            default:
-                System.out.println("Opcão inválida");
-                break;
+        try {
+            switch (opcao) {
+                case "1":
+                    jornadaService.exibir();
+                    break;
+                case "2":
+                    motoristaService.exibir();
+                    break;
+                case "3":
+                    veiculoService.exibir();
+                    break;
+                case "4":  
+                    passageiroService.exibir();
+                    break;
+                case "5":  
+                    trechoService.exibir();
+                    break;
+                case "6":   
+                    trajetoService.exibir();
+                    break;
+                case "7":
+                    jornadaService.exibir();
+                    break;
+                case "8":
+                    embarqueService.exibir();
+                    break;
+                case "0":
+                    System.out.println("Saindo...");
+                    break;  
+                default:
+                    System.out.println("Opcão inválida");
+                    break;
+            }
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
         }
     }
 

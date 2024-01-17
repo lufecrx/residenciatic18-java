@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,18 +15,20 @@ import entidades.Trecho;
 import entidades.Veiculo;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
+import utils.DuplicataException;
 import utils.GerenciadorDeDados;
 import utils.ListaVaziaException;
 
 public class JornadaService implements CadastroInterface {
-    
+
     private List<Jornada> jornadas;
     private TrajetoService trajetos;
     private MotoristaService motoristas;
     private VeiculoService veiculos;
     private String nomeDoArquivo = "jornadas";
 
-    public JornadaService(TrajetoService trajetoService, MotoristaService motoristaService, VeiculoService veiculoService) {
+    public JornadaService(TrajetoService trajetoService, MotoristaService motoristaService,
+            VeiculoService veiculoService) {
         this.jornadas = new ArrayList<>();
         this.trajetos = trajetoService;
         this.motoristas = motoristaService;
@@ -34,27 +37,28 @@ public class JornadaService implements CadastroInterface {
 
     @Override
     public void cadastrar(Scanner scanner) {
-        
+
         System.out.println("Cadastrando jornada");
 
-        if (trajetos.getCadastros().isEmpty()) {
-            System.out.println("Cadastre pelo menos um trajeto antes de cadastrar uma jornada.");
+        try {
+            System.out.print("Trajetos: ");
+            trajetos.exibir();
+        } catch (ListaVaziaException e) {
+            System.out.println("Erro: " + e.getMessage());
             return;
         }
-
-        System.out.print("Trajetos: ");
-        trajetos.exibir();
 
         try {
             List<Trajeto> trajetosDaJornada = adicionarTrajetos(scanner);
             Motorista motoristaAssociado = associarMotorista(scanner);
             Veiculo veiculoAssociado = associarVeiculo(scanner);
-            
+
             Jornada jornada = new Jornada(trajetosDaJornada, motoristaAssociado, veiculoAssociado);
             jornadas.add(jornada);
             salvar();
         } catch (Exception e) {
             System.out.println("Erro: " + e.getMessage());
+            return;
         }
 
         System.out.println("Jornada cadastrada com sucesso!");
@@ -65,7 +69,8 @@ public class JornadaService implements CadastroInterface {
         List<Trajeto> trajetosDaJornada = new ArrayList<>();
 
         while (true) {
-            System.out.print("Selecione o número correspondente ao trajeto para adicionar a jornada ou digite '0' para encerrar: ");
+            System.out.print(
+                    "Selecione o número correspondente ao trajeto para adicionar a jornada ou digite '0' para encerrar: ");
             int trajeto = scanner.nextInt();
 
             if (trajeto > 0 && trajeto <= trajetos.getCadastros().size()) {
@@ -85,7 +90,7 @@ public class JornadaService implements CadastroInterface {
         return trajetosDaJornada;
     }
 
-    public Motorista associarMotorista(Scanner scanner) throws CadastroInvalidoException {
+    public Motorista associarMotorista(Scanner scanner) throws CadastroInvalidoException, ListaVaziaException {
         System.out.println("Motoristas: ");
         motoristas.exibir();
 
@@ -101,8 +106,7 @@ public class JornadaService implements CadastroInterface {
         throw new CadastroInvalidoException("CNH inválido.");
     }
 
-    public Veiculo associarVeiculo(Scanner scanner) throws CadastroInvalidoException {
-
+    public Veiculo associarVeiculo(Scanner scanner) throws CadastroInvalidoException, ListaVaziaException {
         System.out.println("Veiculos: ");
         veiculos.exibir();
 
@@ -110,7 +114,7 @@ public class JornadaService implements CadastroInterface {
         String placa = scanner.next();
 
         for (Veiculo veiculo : veiculos.getCadastros()) {
-            if(veiculo.getPlaca().equals(placa)) {
+            if (veiculo.getPlaca().equals(placa)) {
                 return veiculo;
             }
         }
@@ -131,7 +135,200 @@ public class JornadaService implements CadastroInterface {
             System.out.println("JORNADA " + index++);
             System.out.println("Trajetos: ");
             TrajetoService.exibir(jornada.getTrajetos());
-            System.out.println();            
+            System.out.println();
+        }
+    }
+
+    @Override
+    public void alterar(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Alterando jornada");
+
+        exibir();
+
+        int index = -1;
+        try {
+            System.out.print("Selecione o número correspondente a jornada que deseja alterar: ");
+            index = scanner.nextInt();
+            scanner.nextLine();
+
+            if (index > 0 && index <= jornadas.size()) {
+                Jornada jornada = jornadas.get(index - 1);
+                System.out.println("Jornada " + index);
+                System.out.println("Trajetos: ");
+                TrajetoService.exibir(jornada.getTrajetos());
+                System.out.println(
+                        "Motorista: " + jornada.getMotorista().getNome() + " - " + jornada.getMotorista().getCnh());
+                System.out.println("Veiculo: " + jornada.getVeiculo().getMarca() + " "
+                        + jornada.getVeiculo().getModelo() + " - " + jornada.getVeiculo().getPlaca());
+
+                System.out.println("O que deseja alterar?");
+                System.out.println("1 - Trajetos");
+                System.out.println("2 - Motorista");
+                System.out.println("3 - Veiculo");
+
+                System.out.print("Selecione a opção desejada: ");
+                int opcao = scanner.nextInt();
+
+                switch (opcao) {
+                    case 1:
+                        alterarTrajetos(jornada, scanner);
+                        salvar();
+                        break;
+                    case 2:
+                        alterarMotorista(jornada, scanner);
+                        salvar();
+                        break;
+                    case 3:
+                        alterarVeiculo(jornada, scanner);
+                        salvar();
+                        break;
+                    default:
+                        System.out.println("Opcão inválida.");
+                        break;
+                    }
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para jornada");
+        }
+    }
+
+    @Override
+    public void excluir(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Excluindo jornada");
+
+        exibir();
+
+        int index = -1;
+        try {
+            System.out.print("Selecione o número correspondente a jornada que deseja excluir: ");
+            index = scanner.nextInt();
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para jornada");
+        } 
+
+        if (index > 0 && index <= getCadastros().size()) {
+            jornadas.remove(index - 1);
+        }
+
+        System.out.println("Jornada excluída com sucesso!");
+    }
+
+    private void alterarVeiculo(Jornada jornada, Scanner scanner) {
+        try {
+            System.out.println("Veiculos: ");
+            veiculos.exibir();
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        System.out.print("Selecione a placa correspondente ao veiculo para associar a jornada: ");
+        String placa = scanner.next();
+
+        for (Veiculo veiculo : veiculos.getCadastros()) {
+            if (veiculo.getPlaca().equals(placa)) {
+                jornada.setVeiculo(veiculo);
+                System.out.println("Veiculo associado com sucesso!");
+                return;
+            }
+        }
+    }
+
+    private void alterarMotorista(Jornada jornada, Scanner scanner) {        
+        try {
+            System.out.println("Motoristas: ");
+            motoristas.exibir();
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        System.out.print("Selecione a CNH correspondente ao motorista para associar a jornada: ");
+        String cnh = scanner.next();
+
+        for (Motorista motorista : motoristas.getCadastros()) {
+            if (motorista.getCnh().equals(cnh)) {
+                jornada.setMotorista(motorista);
+                System.out.println("Motorista associado com sucesso!");
+                return;
+            }
+        }
+    }
+
+    private void alterarTrajetos(Jornada jornada, Scanner scanner) {
+       
+        System.out.println("Deseja adicionar ou remover?");
+        System.out.println("1 - Adicionar");
+        System.out.println("2 - Remover");
+
+        int opcao = -1;
+        try {
+            System.out.print("Selecione a opção desejada: ");
+            opcao = scanner.nextInt();
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para adicionar/remover");
+            return;
+        }
+
+        try {
+            if (opcao == 1) {
+                System.out.println("Selecione o trajeto que deseja adicionar:");
+                TrajetoService.exibir(jornada.getTrajetos());
+    
+                while (true) {
+                    System.out.print(
+                            "Selecione o número correspondente ao trajeto para adicionar ao jornada ou digite '0' para encerrar: ");
+                    int trajeto = scanner.nextInt();
+    
+                    if (trajeto > 0 && trajeto <= jornada.getTrajetos().size()) {
+                        jornada.cadastraTrajeto(jornada.getTrajetos().get(trajeto - 1));
+                        System.out.println("Trajeto adicionado com sucesso!");
+                    }
+    
+                    if (trajeto == 0) {
+                        break;
+                    }
+                }
+            }
+        } catch (DuplicataException e) {
+            System.out.println("Erro: " + e.getMessage());
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para adicionar trajeto");
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        try {
+            if (opcao == 2) {
+                System.out.println("Selecione o trajeto que deseja remover:");
+                TrajetoService.exibir(jornada.getTrajetos());
+    
+                while (true) {
+                    System.out.println(
+                            "Selecione o número correspondente ao trajeto para remover do jornada ou digite '0' para encerrar: ");
+                    int trajeto = scanner.nextInt();
+    
+                    if (trajeto > 0 && trajeto <= jornada.getTrajetos().size()) {
+                        jornada.removeTrajeto(jornada.getTrajetos().get(trajeto - 1));
+                        System.out.println("Trajeto removido com sucesso!");
+                    }
+    
+                    if (trajeto == 0) {
+                        break;
+                    }
+                }
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para remover trajeto");
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+            return;
         }
     }
 
@@ -155,7 +352,7 @@ public class JornadaService implements CadastroInterface {
 
             while ((linha = reader.readLine()) != null) {
                 String[] dados = linha.split("//");
-                
+
                 List<Trajeto> listaDeTrajetos = new ArrayList<>();
                 // Construir trajeto
                 String[] dadosTrajeto = dados[0].split("|");
@@ -167,13 +364,14 @@ public class JornadaService implements CadastroInterface {
                     // Procurar trecho no cadastro de trechos
                     for (Trajeto trajetoCadastrado : trajetos.getCadastros()) {
                         for (Trecho trechoCadastrado : trajetoCadastrado.getTrechos()) {
-                            if (trechoCadastrado.getOrigem().getNome().equals(origem) && trechoCadastrado.getDestino().getNome().equals(destino)) {
+                            if (trechoCadastrado.getOrigem().getNome().equals(origem)
+                                    && trechoCadastrado.getDestino().getNome().equals(destino)) {
                                 listaDeTrajetos.add(trajetoCadastrado);
                             }
                         }
                     }
                 }
-                
+
                 String motorista = dados[1];
                 String veiculo = dados[2];
 
@@ -183,8 +381,8 @@ public class JornadaService implements CadastroInterface {
                         // Procurar veiculo no cadastro de veiculo
                         for (Veiculo veiculoCadastrado : veiculos.getCadastros()) {
                             if (veiculoCadastrado.getPlaca().equals(veiculo)) {
-                                Jornada jornada = new Jornada(listaDeTrajetos, motoristaCadastrado, veiculoCadastrado); 
-                                this.jornadas.add(jornada);                               
+                                Jornada jornada = new Jornada(listaDeTrajetos, motoristaCadastrado, veiculoCadastrado);
+                                this.jornadas.add(jornada);
                             }
                         }
                     }

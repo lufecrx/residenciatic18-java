@@ -2,6 +2,7 @@ package entidades;
 
 import java.util.List;
 
+import utils.DuplicataException;
 import utils.RegistroInterface;
 
 public class Jornada implements RegistroInterface {
@@ -16,6 +17,17 @@ public class Jornada implements RegistroInterface {
         this.veiculo = veiculo;
     }
 
+    public void cadastraTrajeto(Trajeto trajeto) throws DuplicataException {
+        if (this.trajetos.contains(trajeto)) {
+            throw new DuplicataException("Trajeto duplicado");
+        }
+        this.trajetos.add(trajeto);
+    }
+
+    public void removeTrajeto(Trajeto trajeto) {
+        this.trajetos.remove(trajeto);
+    }
+
     public List<Trajeto> getTrajetos() {
         return trajetos;
     }
@@ -26,6 +38,14 @@ public class Jornada implements RegistroInterface {
 
     public Veiculo getVeiculo() {
         return veiculo;
+    }
+
+    public void setMotorista(Motorista motorista) {
+        this.motorista = motorista;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
     }
 
     @Override

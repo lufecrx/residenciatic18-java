@@ -152,13 +152,13 @@ public class EmbarqueService implements CadastroInterface {
             try {
                 System.out.println("Novo passageiro: ");
                 passageiros.exibir();
-                System.out.println("Selecione o número correspondente do passageiro para associar ao embarque: ");
+                System.out.println("Selecione o número correspondente ao novo passageiro que deseja associar ao embarque: ");
                 int passageiroIdx = scanner.nextInt();
                 embarques.get(index - 1).setPassageiro(passageiros.getCadastros().get(passageiroIdx - 1));
                 
                 System.out.println("Nova parada de origem: ");
                 trechos.exibir();
-                System.out.println("Selecione o número correspondente do trecho para associar ao embarque: ");
+                System.out.println("Selecione o número correspondente a parada de origem que deseja associar ao embarque: ");
                 int trechoIdx = scanner.nextInt();
                 embarques.get(index - 1).setParada(trechos.getCadastros().get(trechoIdx - 1).getOrigem());
             } catch (InputMismatchException e) {
@@ -169,7 +169,32 @@ public class EmbarqueService implements CadastroInterface {
             System.out.println("Embarque alterado com sucesso!");
             salvar();
         }
+    }
 
+    @Override
+    public void excluir(Scanner scanner) throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
+
+        System.out.println("Excluindo embarque");
+
+        exibir();
+
+        int index = -1;
+        try {
+            System.out.print("Selecione o número correspondente ao embarque que deseja excluir: ");
+            index = scanner.nextInt();
+            scanner.nextLine();
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Entrada inválida para embarque");
+            return;
+        }
+
+        if (index > 0 && index <= embarques.size()) {
+            embarques.remove(index - 1);
+        }
+        
+        System.out.println("Embarque excluído com sucesso!");
+        salvar();
     }
 
     @Override

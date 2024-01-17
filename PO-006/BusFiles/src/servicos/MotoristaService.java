@@ -114,11 +114,8 @@ public class MotoristaService implements CadastroInterface {
     }
 
     @Override
-    public void exibir() {
-        if (motoristas.isEmpty()) {
-            System.out.println("Nenhum motorista encontrado");
-            return;
-        }
+    public void exibir() throws ListaVaziaException {
+        GerenciadorDeDados.estaVazio(getCadastros(), nomeDoArquivo);
 
         for (Motorista motorista : motoristas) {
             System.out.println("Nome: " + motorista.getNome() + "| CNH: " + motorista.getCnh());

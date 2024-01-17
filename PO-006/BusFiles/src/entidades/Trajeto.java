@@ -3,6 +3,7 @@ package entidades;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.DuplicataException;
 import utils.RegistroInterface;
 
 public class Trajeto implements RegistroInterface {
@@ -13,8 +14,15 @@ public class Trajeto implements RegistroInterface {
         this.trechos = new ArrayList<>();
     }
     
-    public void cadastraTrecho(Trecho trecho) {
+    public void cadastraTrecho(Trecho trecho) throws DuplicataException  {
+        if (this.trechos.contains(trecho)) {
+            throw new DuplicataException("Trecho duplicado");
+        }
         this.trechos.add(trecho);
+    }
+
+    public void removeTrecho(Trecho trechoSelecionado) {
+        this.trechos.remove(trechoSelecionado);
     }
 
     public void mostrarTrechos() {
@@ -39,4 +47,5 @@ public class Trajeto implements RegistroInterface {
         }
         return sb.toString();
     }
+
 }
