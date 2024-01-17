@@ -60,6 +60,8 @@ public class App {
         System.out.println("Selecione uma opção:");
         System.out.println("1 - Menu de cadastro");
         System.out.println("2 - Menu de consulta");
+        System.out.println("3 - Menu de alteração");
+        System.out.println("4 - Menu de exclusão");
         System.out.println("0 - Sair");
 
         System.out.print("Insira o número da opção desejada: ");
@@ -71,6 +73,12 @@ public class App {
                 break;
             case "2":
                 menuConsulta(scanner);
+                break;
+            case "3":
+                menuAlteracao(scanner);
+                break;
+            case "4":
+                menuExclusao(scanner);
                 break;
             case "0":
                 System.out.println("Saindo...");
@@ -173,6 +181,112 @@ public class App {
                 case "0":
                     System.out.println("Saindo...");
                     break;  
+                default:
+                    System.out.println("Opcão inválida");
+                    break;
+            }
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void menuAlteracao(Scanner scanner) {
+        System.out.println("Selecione uma opção:");
+        System.out.println("1 - Alterar jornadas");
+        System.out.println("2 - Alterar motoristas");
+        System.out.println("3 - Alterar veiculos");
+        System.out.println("4 - Alterar passageiros");
+        System.out.println("5 - Alterar trechos");
+        System.out.println("6 - Alterar trajetos");
+        System.out.println("7 - Alterar jornadas");
+        System.out.println("8 - Alterar embarques");
+        System.out.println("0 - Sair");
+
+        System.out.println("Insira o número da opção desejada: ");
+        String opcao = scanner.next();
+        
+        try {
+            switch (opcao) {
+                case "1":
+                    jornadaService.alterar(scanner);
+                    break;
+                case "2":
+                    motoristaService.alterar(scanner);
+                    break;
+                case "3":
+                    veiculoService.alterar(scanner);
+                    break;
+                case "4":
+                    passageiroService.alterar(scanner);
+                    break;
+                case "5":
+                    trechoService.alterar(scanner);
+                    break;
+                case "6":
+                    trajetoService.alterar(scanner);
+                    break;
+                case "7":
+                    jornadaService.alterar(scanner);
+                    break;
+                case "8":
+                    embarqueService.alterar(scanner);
+                    break;
+                case "0":
+                    System.out.println("Saindo...");
+                    break;
+                default:
+                    System.out.println("Opcão inválida");
+                    break;
+            }
+        } catch (ListaVaziaException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void menuExclusao(Scanner scanner) {
+        System.out.println("Selecione uma opção:");
+        System.out.println("1 - Excluir jornadas");
+        System.out.println("2 - Excluir motoristas");
+        System.out.println("3 - Excluir veiculos");
+        System.out.println("4 - Excluir passageiros");
+        System.out.println("5 - Excluir trechos");
+        System.out.println("6 - Excluir trajetos");
+        System.out.println("7 - Excluir jornadas");
+        System.out.println("8 - Excluir embarques");
+        System.out.println("0 - Sair");
+
+        System.out.println("Insira o número da opção desejada: ");
+        String opcao = scanner.next();
+        
+        try {
+            switch (opcao) {
+                case "1":
+                    jornadaService.excluir(scanner);
+                    break;
+                case "2":
+                    motoristaService.excluir(scanner);
+                    break;
+                case "3":
+                    veiculoService.excluir(scanner);
+                    break;
+                case "4":
+                    passageiroService.excluir(scanner);
+                    break;
+                case "5":
+                    trechoService.excluir(scanner);
+                    break;
+                case "6":
+                    trajetoService.excluir(scanner);
+                    break;
+                case "7":
+                    jornadaService.excluir(scanner);
+                    break;
+                case "8":
+                    embarqueService.excluir(scanner);
+                    break;
+                case "0":
+                    System.out.println("Saindo...");
+                    break;
                 default:
                     System.out.println("Opcão inválida");
                     break;
