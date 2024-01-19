@@ -56,11 +56,6 @@ public class Student {
         return yearOfAdmission;
     }
 
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
-    }
-
     @Override
     public String toString() {
         return "Nome: " + name + "\nCPF: " + cpf + "\nCRA: " + cra + "\nAno de admissão: " + yearOfAdmission;
