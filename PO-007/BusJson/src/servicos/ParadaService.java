@@ -25,7 +25,7 @@ public class ParadaService {
         try {
             validarParada(parada);
             paradas.add(parada);
-        } catch (DuplicataException | CadastroInvalidoException e) {
+        } catch (CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
             return null;
         }
@@ -44,16 +44,11 @@ public class ParadaService {
     }
 
     public boolean validarParada(Parada parada)
-            throws DuplicataException, CadastroInvalidoException {
+            throws CadastroInvalidoException {
         if (parada.getNome() == null || parada.getNome().isEmpty()) {
             throw new CadastroInvalidoException("Parada inválida");
         }
 
-        for (Parada p : paradas) {
-            if (p.getNome().equals(parada.getNome())) {
-                throw new DuplicataException("Parada duplicada");
-            }
-        }
         return true;
     }
 }
