@@ -16,6 +16,10 @@ public class ParadaService {
         this.paradas = new HashSet<>();
     }
 
+    public void adicionarParada(Parada parada) {
+        paradas.add(parada);
+    }
+
     public Parada criar(Scanner scanner) {
         Parada parada = new Parada(scanner.nextLine());
         try {

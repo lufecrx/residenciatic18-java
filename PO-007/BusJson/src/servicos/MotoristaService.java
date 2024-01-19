@@ -1,11 +1,15 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import entidades.Motorista;
 import utils.CadastroInterface;
@@ -129,30 +133,20 @@ public class MotoristaService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+        File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
 
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            String linha;
-
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split(";");
-
-                if (dados.length == 2) {
-                    String nome = dados[0];
-                    String cnh = dados[1];
-
-                    Motorista motorista = new Motorista(nome, cnh);
-                    motoristas.add(motorista);
-                }
-            }
+        try {
+            // Reconstruir lista de motoristas
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            motoristas = new Gson().fromJson(conteudoJson, new TypeToken<List<Motorista>>() {}.getType());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de motoristas: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
     }
 }

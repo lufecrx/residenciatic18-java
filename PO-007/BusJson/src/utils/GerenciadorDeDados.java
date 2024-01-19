@@ -23,7 +23,7 @@ public class GerenciadorDeDados {
 
         // Salvar dados em um arquivo json
         try {
-            File file = new File("arquivos/"+ nomeDoArquivo + ".json");
+            File file = new File("arquivos/" + nomeDoArquivo + ".json");
             Path path = file.toPath();
 
             Gson gson = new Gson();
@@ -54,5 +54,5 @@ public class GerenciadorDeDados {
             throw new ListaVaziaException("Nenhum cadastro de " + nome + " encontrado.");
         }
     }
-    
+
 }

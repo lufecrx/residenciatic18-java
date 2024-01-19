@@ -1,14 +1,17 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import entidades.Parada;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import entidades.Trajeto;
 import entidades.Trecho;
 import utils.CadastroInterface;
@@ -217,43 +220,19 @@ public class TrajetoService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
-
+        File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split("\\|");
-
-                Trajeto trajeto = new Trajeto();
-                for (String trechoDados : dados) {
-                    String[] dadosTrecho = trechoDados.split(";");
-                    String origem = dadosTrecho[0];
-                    String destino = dadosTrecho[1];
-
-                    // Procurar trecho no cadastro de trechos para associar ao trajeto
-                    // correspondente
-                    Parada paradaOrigem = new Parada(origem);
-                    Parada paradaDestino = new Parada(destino);
-
-                    for (Trecho trecho : trechos.getCadastros()) {
-                        if (trecho.getOrigem().equals(paradaOrigem) && trecho.getDestino().equals(paradaDestino)) {
-                            trajeto.cadastraTrecho(trecho);
-                        }
-                    }
-
-                    trajetos.add(trajeto);
-                }
-            }
+        try {
+            // Reconstruir lista de trajetos
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            trajetos = new Gson().fromJson(conteudoJson, new TypeToken<List<Trajeto>>() {}.getType());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de trajetos: " + e.getMessage());
-        } catch (DuplicataException e) {
-            System.out.println("Erro: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
     }
 }

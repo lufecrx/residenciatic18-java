@@ -1,16 +1,19 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import entidades.Parada;
 import entidades.Trecho;
 import utils.CadastroInterface;
-import utils.CadastroInvalidoException;
 import utils.DuplicataException;
 import utils.GerenciadorDeDados;
 import utils.ListaVaziaException;
@@ -176,34 +179,24 @@ public class TrechoService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+        File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
 
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
+            System.out.println("Erro: " + e.getMessage());
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split(";");
-
-                if (dados.length == 3) {
-                    String origem = dados[0];
-                    String destino = dados[1];
-                    String minutos = dados[2];
-
-                    Parada paradaOrigem = paradaService.criar(origem);
-                    Parada paradaDestino = paradaService.criar(destino);
-
-                    Trecho trecho = new Trecho(paradaOrigem, paradaDestino, minutos);
-                    trechos.add(trecho);
-                }
+        try {
+            // Reconstruir a lista de trechos e paradas
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            trechos = new Gson().fromJson(conteudoJson, new TypeToken<List<Trecho>>() {}.getType());
+        
+            for (Trecho trecho : trechos) {
+                paradaService.adicionarParada(trecho.getOrigem());
+                paradaService.adicionarParada(trecho.getDestino());
             }
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de trechos: " + e.getMessage());
-        } catch (DuplicataException | CadastroInvalidoException e) {
             System.out.println("Erro: " + e.getMessage());
         }
     }

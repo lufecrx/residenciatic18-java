@@ -1,11 +1,15 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import entidades.Passageiro;
 import utils.CadastroInterface;
@@ -193,31 +197,20 @@ public class PassageiroService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
-      
+         File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
+
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
 
-        try(BufferedReader reader = new BufferedReader((new FileReader(arquivo)))) {
-            String linha;
-            while(( linha = reader.readLine()) != null) {
-                String[] dados = linha.split(";");
-                
-                if (dados.length == 4) {
-                    String nome = dados[0];
-                    String cpf = dados[1];
-                    CartaoEnum cartao = CartaoEnum.valueOf(dados[2]);
-                    String numCartao = dados[3];
-                    Passageiro passageiro = new Passageiro(nome, cpf, cartao, numCartao);
-                    passageiros.add(passageiro);
-                }
-            }
+        try {
+            // Reconstruir lista de cadastros
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            passageiros = new Gson().fromJson(conteudoJson, new TypeToken<List<Passageiro>>() {}.getType());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de passageiros: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
     }
-
 }

@@ -1,11 +1,15 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import entidades.Veiculo;
 import utils.CadastroInterface;
@@ -132,30 +136,20 @@ public class VeiculoService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+        File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
 
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
-        
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            String linha;
-            while ((linha = reader.readLine()) != null) {
-                String [] dados = linha.split(";");
 
-                if (dados.length == 3) {
-                    String placa = dados[0];
-                    String marca = dados[1];
-                    String modelo = dados[2];
-
-                    Veiculo veiculo = new Veiculo(placa, marca, modelo);
-                    veiculos.add(veiculo);
-                }
-            }
+        try {
+            // Reconstruir lista de cadastros
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            veiculos = new Gson().fromJson(conteudoJson, new TypeToken<List<Veiculo>>() {}.getType());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de veiculos: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
     }
 }
