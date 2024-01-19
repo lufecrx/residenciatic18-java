@@ -20,7 +20,7 @@ public class JReader {
 		System.out.print("Digite o nome do arquivo: ");
 		String fileName = scanner.nextLine();
 
-		File file = new File(fileName);
+		File file = new File(fileName + ".json");
 
 		List<Student> students = new ArrayList<>();
 
@@ -28,7 +28,7 @@ public class JReader {
 		if (file.exists()) {
 			try {
 				// Reconstruir lista de estudantes
-				students = new Gson().fromJson(Files.readString(Path.of(fileName)),
+				students = new Gson().fromJson(Files.readString(Path.of(file.toString())),
 						new TypeToken<List<Student>>() {
 						}.getType());
 			} catch (IOException e) {

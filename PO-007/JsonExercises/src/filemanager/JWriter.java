@@ -20,7 +20,7 @@ public class JWriter {
         String fileName = scanner.nextLine();
 
         // Verificar se o arquivo existe e criar caso não exista
-        File file = new File(fileName);
+        File file = new File(fileName + ".json");
         if (!file.exists()) {
             try {
                 file.createNewFile();

@@ -3,18 +3,34 @@ package utils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+
+import com.google.gson.Gson;
 
 public class GerenciadorDeDados {
 
     public static void salvar(String nomeDoArquivo, List<?> cadastros) {
         // Limpar o arquivo
         try {
-            FileWriter writer = new FileWriter("arquivos/" + nomeDoArquivo + ".txt");
+            FileWriter writer = new FileWriter("arquivos/" + nomeDoArquivo + ".json");
             writer.write("");
             writer.close();
         } catch (IOException e) {
             System.out.println("Erro ao limpar o arquivo: " + e.getMessage());
+        }
+
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(cadastros);
+
+            Path path = file.toPath();
+            Files.write(path, json.getBytes());
+
+            System.out.println("Estudantes escritos com sucesso.");
+        } catch (IOException e) {
+            System.out.println("Ocorreu um erro ao escrever os estudantes.");
         }
         
         // Salvar dados em um arquivo
