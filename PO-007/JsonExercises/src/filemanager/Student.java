@@ -3,8 +3,6 @@ package filemanager;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
-
 public class Student {
 
     private String name;
