@@ -3,6 +3,7 @@ package menu;
 import entidades.Fatura;
 import entidades.Imovel;
 import entidades.Pagamento;
+import util.ImovelNaoEncontrado;
 
 import java.util.Calendar;
 import java.util.List;
@@ -52,10 +53,7 @@ public class MenuFatura {
         } while (opcao != 0);
     }
 
-    private void criarFatura(List<Imovel> imoveis) {
-        System.out.println("Digite a matrícula do imóvel: ");
-        String matriculaImovel = scanner.nextLine();
-
+    public void registraLeitura(List<Imovel> imoveis, String matriculaImovel) throws ImovelNaoEncontrado {
         // Lógica para encontrar o imóvel com a matrícula fornecida
         Optional<Imovel> imovelEncontrado = imoveis.stream()
                 .filter(imovel -> imovel.getMatricula().equals(matriculaImovel))
@@ -72,9 +70,9 @@ public class MenuFatura {
             // Lógica para calcular o valor da fatura com base no custo por KWh
             double custoPorKWh = 10.0; // Custo por KWh (pode ser ajustado conforme necessário)
             double valorFatura = consumo * custoPorKWh;
-            
+
             Calendar dataHoraAtual = Calendar.getInstance();
-            
+
             // Lógica para criar uma nova instância de Fatura
             Fatura novaFatura = new Fatura(imovel, leituraAnterior, leituraAtual, dataHoraAtual, valorFatura);
 
@@ -84,20 +82,32 @@ public class MenuFatura {
             // Atualizar a última leitura do imóvel
             imovel.setLeituraAnterior(leituraAtual);
 
-            System.out.println("Fatura criada com sucesso!");
         } else {
-            System.out.println("Imóvel não encontrado. Não foi possível criar a fatura.");
+            throw new ImovelNaoEncontrado(
+                "Imóvel com matrícula " + matriculaImovel + " não encontrado. Não foi possível criar a fatura.");
+            }
         }
+        
+        private void criarFatura(List<Imovel> imoveis) {
+        System.out.println("Digite a matrícula do imóvel: ");
+        String matriculaImovel = scanner.nextLine();
+        try {
+            registraLeitura(imoveis, matriculaImovel);
+        } catch (ImovelNaoEncontrado e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        System.out.println("Fatura criada com sucesso!");
     }
 
     private void listarTodasFaturas() {
         System.out.println("==== Lista de Todas as Faturas ====");
-        
+
         if (faturas.isEmpty()) {
             System.out.println("Nenhuma fatura encontrada.");
             return;
         }
-        
+
         for (Fatura fatura : faturas) {
             System.out.println("Data: " + fatura.getData().getTime());
             System.out.println("Última Leitura: " + fatura.getUltimaLeitura());
@@ -112,12 +122,12 @@ public class MenuFatura {
 
     private void listarFaturasEmAberto() {
         System.out.println("==== Lista de Faturas em Aberto ====");
-        
+
         if (faturas.stream().allMatch(Fatura::isQuitado)) {
             System.out.println("Nenhuma fatura em aberto encontrada.");
             return;
         }
-        
+
         for (Fatura fatura : faturas) {
             if (!fatura.isQuitado()) {
                 System.out.println("Data: " + fatura.getData().getTime());

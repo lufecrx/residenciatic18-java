@@ -2,12 +2,14 @@ package menu;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 import entidades.Fatura;
 import entidades.Pagamento;
 import entidades.Reembolso;
+import util.FaturaNaoEncontrada;
 
 public class MenuPagamentos {
 
@@ -21,6 +23,10 @@ public class MenuPagamentos {
         this.reembolsos = new ArrayList<>();
         this.listaDeFaturas = listaDeFaturas;
         this.scanner = new Scanner(System.in);
+    }
+
+    public List<Reembolso> getReembolsos() {
+        return reembolsos;
     }
 
     public void exibirMenu() {
@@ -55,33 +61,44 @@ public class MenuPagamentos {
         } while (opcao != 0);
     }
 
+    public void registraPagamento(int idFatura, double valorPagamento) throws FaturaNaoEncontrada {
+        // Lógica para registrar o pagamento
+        Fatura fatura = encontrarFaturaPorId(idFatura);
+
+        Pagamento novoPagamento = new Pagamento(fatura.getIdFatura(), valorPagamento, Calendar.getInstance());
+        pagamentos.add(novoPagamento);
+
+        // Verificar se o pagamento quitou a fatura ou gerou reembolso
+        verificarQuitacaoFatura(idFatura, novoPagamento);
+    }
+
     public void incluirPagamento() {
         System.out.println("==== Inclusão de Pagamento ====");
         System.out.println("Digite o ID da fatura associada ao pagamento: ");
-        int idFatura = scanner.nextInt();
-        Fatura fatura = encontrarFaturaPorId(idFatura);
-        scanner.nextLine(); // Consumir a quebra de linha
 
-        if (fatura == null) {
-            System.out.println("A fatura não foi encontrada.");
+        try {
+            int idFatura = scanner.nextInt();
+            scanner.nextLine(); // Consumir a quebra de linha
+
+            System.out.println("Digite o valor do pagamento: ");
+            double valorPagamento = scanner.nextFloat();
+            scanner.nextLine(); // Consumir a quebra de linha
+
+            registraPagamento(idFatura, valorPagamento);
+
+        } catch (FaturaNaoEncontrada e) {
+            System.out.println(e.getMessage() + " Tente novamente");
+            return;
+        } catch (InputMismatchException e) {
+            System.out.println("Entrada inválida. Tente novamente");
+            return;
+        } catch (Exception e) {
+            System.out.println("Erro inesperado. Tente novamente");
             return;
         }
 
-        System.out.println("Digite o valor do pagamento: ");
-        float valorPagamento = scanner.nextFloat();
-        scanner.nextLine(); // Consumir a quebra de linha
-
-        Pagamento novoPagamento = new Pagamento(idFatura, valorPagamento, Calendar.getInstance());
-        pagamentos.add(novoPagamento);
-
-        System.out.println("Valor pago: " + fatura.getValorPago());
-
-        // Verificar se o pagamento quitou a fatura ou gerou reembolso
-        verificarQuitacaoFatura(fatura, novoPagamento);
-
         System.out.println("Pagamento registrado com sucesso.");
 
-        System.out.println("Valor pago: " + fatura.getValorPago());
     }
 
     public void listarPagamentos() {
@@ -110,10 +127,12 @@ public class MenuPagamentos {
         }
     }
 
-    private void verificarQuitacaoFatura(Fatura fatura, Pagamento pagamento) {
+    private void verificarQuitacaoFatura(int idFatura, Pagamento pagamento) throws FaturaNaoEncontrada {
+        Fatura fatura = encontrarFaturaPorId(idFatura);
+        System.out.println("Valor pago: " + fatura.getValorPago());
+
         if (fatura != null && !fatura.isQuitado()) {
             fatura.adicionarPagamento(pagamento);
-            System.out.println("Valor pago: " + fatura.getValorPago());
             if (fatura.isQuitado()) {
                 // Se o valor pago for maior que o valor calculado, gerar reembolso
                 double valorEmExcesso = (fatura.getValorPago() - fatura.getValorCalculado());
@@ -128,12 +147,12 @@ public class MenuPagamentos {
         }
     }
 
-    private Fatura encontrarFaturaPorId(int idFatura) {
+    private Fatura encontrarFaturaPorId(int idFatura) throws FaturaNaoEncontrada {
         for (Fatura fatura : listaDeFaturas) {
             if (fatura.getIdFatura() == idFatura) {
                 return fatura;
             }
         }
-        return null; // Retorna null se a fatura não for encontrada
+        throw new FaturaNaoEncontrada("Fatura não encontrada.");
     }
 }

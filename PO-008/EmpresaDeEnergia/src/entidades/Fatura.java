@@ -95,6 +95,14 @@ public class Fatura {
 		return divida;
 	}
 
+	public double getTotalReembolsos() {
+		return reembolsos.stream().mapToDouble(Reembolso::getValor).sum();
+	}
+
+	public List<Reembolso> getReembolsos() {
+		return reembolsos;
+	}
+
 	public void quitarFatura() {
 		quitado = true;
 	}
