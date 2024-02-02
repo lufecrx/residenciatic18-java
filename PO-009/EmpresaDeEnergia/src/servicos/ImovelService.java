@@ -1,17 +1,21 @@
-package menu;
+package servicos;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import entidades.Imovel;
+import util.ImovelNaoEncontradoException;
 
-public class MenuGestaoImoveis {
-	private List<Imovel> imoveis;
+public class ImovelService {
+
+    private List<Imovel> imoveis;
     private Scanner scanner;
 
-    public MenuGestaoImoveis(List<Imovel> imoveis) {
-    	this.imoveis = imoveis;
-        this.scanner = new Scanner(System.in);
+    public ImovelService(Scanner scanner) {
+        this.imoveis = new ArrayList<>();
+        this.scanner = scanner;
     }
 
     public void exibirMenu() {
@@ -31,19 +35,19 @@ public class MenuGestaoImoveis {
 
             switch (opcao) {
                 case 1:
-                    incluirImovel();
+                    incluir();
                     break;
                 case 2:
-                    consultarImovel();
+                    consultar();
                     break;
                 case 3:
-                    listarImoveis();
+                    listar();
                     break;
                 case 4:
-                    excluirImovel();
+                    excluir();
                     break;
                 case 5:
-                    alterarImovel();
+                    alterar();
                     break;
                 case 0:
                     System.out.println("Voltando para o Menu Principal...");
@@ -54,7 +58,7 @@ public class MenuGestaoImoveis {
         } while (opcao != 0);
     }
 
-    private void incluirImovel() {
+    public void incluir() {
         System.out.println("Digite a matrícula do imóvel: ");
         String matricula = scanner.nextLine();
 
@@ -62,24 +66,22 @@ public class MenuGestaoImoveis {
         String endereco = scanner.nextLine();
 
         Imovel novoImovel = new Imovel(matricula, endereco);
-        
+
         System.out.println("Leitura anterior de energia: ");
         double leituraAnterior = scanner.nextDouble();
-        
+
         System.out.println("Leitura atual de energia: ");
         double leituraAtual = scanner.nextDouble();
-        
+
         novoImovel.setLeituraAnterior(leituraAnterior);
         novoImovel.setLeituraAtual(leituraAtual);
-        
+
         imoveis.add(novoImovel);
-        
-        
 
         System.out.println("Imóvel incluído com sucesso!");
     }
 
-    private void consultarImovel() {
+    public void consultar() {
         System.out.println("Digite a matrícula do imóvel que deseja consultar: ");
         String matricula = scanner.nextLine();
 
@@ -97,9 +99,8 @@ public class MenuGestaoImoveis {
                         () -> System.out.println("Imóvel não encontrado.")
                 );
     }
-    
 
-    private void listarImoveis() {
+    public void listar() {
         System.out.println("Lista de Imóveis:");
         if (imoveis.isEmpty()) {
             System.out.println("Nenhum imóvel cadastrado.");
@@ -110,7 +111,7 @@ public class MenuGestaoImoveis {
         }
     }
 
-    private void excluirImovel() {
+    public void excluir() {
         System.out.println("Digite a matrícula do imóvel que deseja excluir: ");
         String matricula = scanner.nextLine();
 
@@ -124,7 +125,7 @@ public class MenuGestaoImoveis {
         }
     }
 
-    private void alterarImovel() {
+    public void alterar() {
         System.out.println("Digite a matrícula do imóvel que deseja alterar: ");
         String matricula = scanner.nextLine();
 
@@ -150,4 +151,19 @@ public class MenuGestaoImoveis {
                         () -> System.out.println("Imóvel não encontrado.")
                 );
     }
+
+    public Imovel getImovelPelaMatricula(String matricula) throws ImovelNaoEncontradoException {
+        // Lógica para encontrar o imóvel com a matrícula fornecida
+        Optional<Imovel> imovelEncontrado = imoveis.stream()
+                .filter(imovel -> imovel.getMatricula().equals(matricula))
+                .findFirst();
+
+        if (imovelEncontrado.isPresent()) {
+            Imovel imovel = imovelEncontrado.get();
+            return imovel;
+        } else {
+           throw new ImovelNaoEncontradoException("Imóvel com matrícula " + matricula + " não encontrado. Não foi possível criar a fatura.");
+        }
+    }
+
 }

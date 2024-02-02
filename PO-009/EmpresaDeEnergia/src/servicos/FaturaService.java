@@ -1,24 +1,25 @@
-package menu;
+package servicos;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Scanner;
 
 import entidades.Fatura;
 import entidades.Imovel;
 import entidades.Pagamento;
-import util.ImovelNaoEncontrado;
+import util.ImovelNaoEncontradoException;
 
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
-import java.util.Scanner;
+public class FaturaService {
 
-public class MenuFatura {
     private List<Fatura> faturas;
-    private List<Imovel> imoveis;
+    private ImovelService imovelService;
     private Scanner scanner;
 
-    public MenuFatura(List<Fatura> faturas, List<Imovel> imoveis) {
-        this.faturas = faturas;
-        this.imoveis = imoveis;
-        this.scanner = new Scanner(System.in);
+    public FaturaService(Scanner scanner, ImovelService imovelService) {
+        this.imovelService = imovelService;
+        this.faturas = new ArrayList<>();
+        this.scanner = scanner;
     }
 
     public void exibirMenu() {
@@ -36,13 +37,13 @@ public class MenuFatura {
 
             switch (opcao) {
                 case 1:
-                    criarFatura(imoveis);
+                    criar(imovelService);
                     break;
                 case 2:
-                    listarTodasFaturas();
+                    listarTodas();
                     break;
                 case 3:
-                    listarFaturasEmAberto();
+                    listarAbertas();
                     break;
                 case 0:
                     System.out.println("Voltando para o Menu Principal...");
@@ -53,54 +54,45 @@ public class MenuFatura {
         } while (opcao != 0);
     }
 
-    public void registraLeitura(List<Imovel> imoveis, String matriculaImovel) throws ImovelNaoEncontrado {
-        // Lógica para encontrar o imóvel com a matrícula fornecida
-        Optional<Imovel> imovelEncontrado = imoveis.stream()
-                .filter(imovel -> imovel.getMatricula().equals(matriculaImovel))
-                .findFirst();
-
-        if (imovelEncontrado.isPresent()) {
-            Imovel imovel = imovelEncontrado.get();
-
-            // Lógica para calcular o consumo com base nas leituras do imóvel
-            double leituraAtual = imovel.getLeituraAtual();
-            double leituraAnterior = imovel.getLeituraAnterior();
-            double consumo = leituraAtual - leituraAnterior;
-
-            // Lógica para calcular o valor da fatura com base no custo por KWh
-            double custoPorKWh = 10.0; // Custo por KWh (pode ser ajustado conforme necessário)
-            double valorFatura = consumo * custoPorKWh;
-
-            Calendar dataHoraAtual = Calendar.getInstance();
-
-            // Lógica para criar uma nova instância de Fatura
-            Fatura novaFatura = new Fatura(imovel, leituraAnterior, leituraAtual, dataHoraAtual, valorFatura);
-
-            // Adicionar a nova fatura à lista de faturas
-            faturas.add(novaFatura);
-
-            // Atualizar a última leitura do imóvel
-            imovel.setLeituraAnterior(leituraAtual);
-
-        } else {
-            throw new ImovelNaoEncontrado(
-                "Imóvel com matrícula " + matriculaImovel + " não encontrado. Não foi possível criar a fatura.");
-            }
-        }
+    private void registrarLeitura(ImovelService imoveis, String matriculaImovel) throws ImovelNaoEncontradoException {
+        Imovel imovel = null;
         
-        private void criarFatura(List<Imovel> imoveis) {
+        imovel = imoveis.getImovelPelaMatricula(matriculaImovel);
+
+        // Lógica para calcular o consumo com base nas leituras do imóvel
+        double leituraAtual = imovel.getLeituraAtual();
+        double leituraAnterior = imovel.getLeituraAnterior();
+        double consumo = leituraAtual - leituraAnterior;
+
+        // Lógica para calcular o valor da fatura com base no custo por KWh
+        double custoPorKWh = 10.0; // Custo por KWh
+        double valorFatura = consumo * custoPorKWh;
+
+        Calendar dataHoraAtual = Calendar.getInstance();
+
+        // Lógica para criar uma nova instância de Fatura
+        Fatura novaFatura = new Fatura(imovel, leituraAnterior, leituraAtual, dataHoraAtual, valorFatura);
+
+        // Adicionar a nova fatura à lista de faturas
+        faturas.add(novaFatura);
+
+        // Atualizar a última leitura do imóvel
+        imovel.setLeituraAnterior(leituraAtual);
+    }
+
+    public void criar(ImovelService imovelService) {
         System.out.println("Digite a matrícula do imóvel: ");
         String matriculaImovel = scanner.nextLine();
         try {
-            registraLeitura(imoveis, matriculaImovel);
-        } catch (ImovelNaoEncontrado e) {
+            registrarLeitura(imovelService, matriculaImovel);
+        } catch (ImovelNaoEncontradoException e) {
             System.out.println(e.getMessage());
             return;
         }
         System.out.println("Fatura criada com sucesso!");
     }
 
-    private void listarTodasFaturas() {
+    public void listarTodas() {
         System.out.println("==== Lista de Todas as Faturas ====");
 
         if (faturas.isEmpty()) {
@@ -120,7 +112,7 @@ public class MenuFatura {
         }
     }
 
-    private void listarFaturasEmAberto() {
+    public void listarAbertas() {
         System.out.println("==== Lista de Faturas em Aberto ====");
 
         if (faturas.stream().allMatch(Fatura::isQuitado)) {

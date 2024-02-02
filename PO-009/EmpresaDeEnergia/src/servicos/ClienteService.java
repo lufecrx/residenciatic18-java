@@ -1,16 +1,19 @@
-package menu;
+package servicos;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import entidades.Cliente;
 
-public class MenuGestaoClientes {
-	private List<Cliente> clientes;
+public class ClienteService {
+    
+    private List<Cliente> clientes;
     private Scanner scanner;
 
-    public MenuGestaoClientes(List<Cliente> clientes) {
-        this.clientes = clientes;
-    	this.scanner = new Scanner(System.in);
+    public ClienteService(Scanner scanner) {
+        this.clientes = new ArrayList<>();
+        this.scanner = scanner;
     }
 
     public void exibirMenu() {
@@ -30,19 +33,19 @@ public class MenuGestaoClientes {
 
             switch (opcao) {
                 case 1:
-                    incluirCliente();
+                    incluir();
                     break;
                 case 2:
-                    consultarCliente();
+                    consultar();
                     break;
                 case 3:
-                    listarClientes();
+                    listar();
                     break;
                 case 4:
-                    excluirCliente();
+                    excluir();
                     break;
                 case 5:
-                    alterarCliente();
+                    alterar();
                     break;
                 case 0:
                     System.out.println("Voltando para o Menu Principal...");
@@ -53,7 +56,7 @@ public class MenuGestaoClientes {
         } while (opcao != 0);
     }
 
-    private void incluirCliente() {
+    public void incluir() {
        System.out.println("Digite o nome do cliente: ");
        String nome = scanner.nextLine();
        
@@ -67,7 +70,7 @@ public class MenuGestaoClientes {
        System.out.println("Cliente incluído com sucesso.");
     }
 
-    private void consultarCliente() {
+    public void consultar() {
         System.out.println("Digite o CPF do cliente: ");
         String cpf = scanner.nextLine();
         
@@ -84,7 +87,7 @@ public class MenuGestaoClientes {
         		 );
     }
 
-    private void listarClientes() {
+    public void listar() {
         System.out.println("Lista de Clientes: ");
         
         if(clientes.isEmpty()) {
@@ -96,7 +99,7 @@ public class MenuGestaoClientes {
         }
     }
 
-    private void excluirCliente() {
+    public void excluir() {
        System.out.println("Digite o CPF do cliente que deseja remover: ");
        String cpf = scanner.nextLine();
        
@@ -109,7 +112,7 @@ public class MenuGestaoClientes {
        }
     }
 
-    private void alterarCliente() {
+    public void alterar() {
         System.out.println("Digite o CPF do cliente que deseja alterar: ");
         String cpf = scanner.nextLine();
 
@@ -133,5 +136,6 @@ public class MenuGestaoClientes {
                         },
                         () -> System.out.println("Cliente não encontrado.")
                 );
-    }
+    }    
+    
 }

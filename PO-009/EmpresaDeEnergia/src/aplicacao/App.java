@@ -1,38 +1,36 @@
 package aplicacao;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-import entidades.Cliente;
-import entidades.Fatura;
-import entidades.Imovel;
-import menu.MenuFalhasReparos;
-import menu.MenuFatura;
-import menu.MenuGestaoClientes;
-import menu.MenuGestaoImoveis;
-import menu.MenuPagamentos;
+import servicos.ClienteService;
+import servicos.FaturaService;
+import servicos.ImovelService;
 
 public class App {
+
+    private ClienteService clienteService;
+    private ImovelService imovelService;
+    private FaturaService faturaService;
 
 	public static void main(String[] args) {
 		App program = new App();
 		program.Run();		
 	}
+
+    public void carregarEntidades(Scanner scanner) {
+        // Carregar dados
+        this.clienteService = new ClienteService(scanner);
+        this.imovelService = new ImovelService(scanner);
+        this.faturaService = new FaturaService(scanner, imovelService);
+    }
 	
 	private void Run() {
-		List<Cliente> clientes = new ArrayList<>();		
-		List<Fatura> faturas = new ArrayList<>();
-		List<Imovel> imoveis = new ArrayList<>();
-		
-		MenuGestaoClientes menuClientes = new MenuGestaoClientes(clientes);
-		MenuGestaoImoveis menuImoveis = new MenuGestaoImoveis(imoveis);
-		MenuPagamentos menuPagamentos = new MenuPagamentos(faturas);
-		MenuFatura menuFaturas = new MenuFatura(faturas, imoveis);
-		MenuFalhasReparos menuFalhasReparos = new MenuFalhasReparos(imoveis);
-		
         Scanner scanner = new Scanner(System.in);
-
+        carregarEntidades(scanner);
+		
+		// MenuPagamentos menuPagamentos = new MenuPagamentos(faturas);
+		// MenuFalhasReparos menuFalhasReparos = new MenuFalhasReparos(imoveis);
+		
         int opcao;
         do {
             System.out.println("==== Menu Principal ====");
@@ -49,19 +47,19 @@ public class App {
 
             switch (opcao) {
                 case 1:
-                    menuClientes.exibirMenu();
+                    clienteService.exibirMenu();
                     break;
                 case 2:
-                    menuImoveis.exibirMenu();
+                    imovelService.exibirMenu();
                     break;
                 case 3:
-                    menuPagamentos.exibirMenu();
+                    // menuPagamentos.exibirMenu();
                     break;
                 case 4:
-                    menuFaturas.exibirMenu();
+                    faturaService.exibirMenu();
                     break;
                 case 5:
-                    menuFalhasReparos.exibirMenu();
+                    // menuFalhasReparos.exibirMenu();
                     break;
                 case 0:
                     System.out.println("Encerrando a aplicação...");
@@ -71,6 +69,5 @@ public class App {
             }
         } while (opcao != 0);
 
-        scanner.close();
 	}
 }

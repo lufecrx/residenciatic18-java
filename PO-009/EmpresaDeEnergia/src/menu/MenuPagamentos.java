@@ -9,7 +9,7 @@ import java.util.Scanner;
 import entidades.Fatura;
 import entidades.Pagamento;
 import entidades.Reembolso;
-import util.FaturaNaoEncontrada;
+import util.FaturaNaoEncontradaException;
 
 public class MenuPagamentos {
 
@@ -61,7 +61,7 @@ public class MenuPagamentos {
         } while (opcao != 0);
     }
 
-    public void registraPagamento(int idFatura, double valorPagamento) throws FaturaNaoEncontrada {
+    public void registraPagamento(int idFatura, double valorPagamento) throws FaturaNaoEncontradaException {
         // Lógica para registrar o pagamento
         Fatura fatura = encontrarFaturaPorId(idFatura);
 
@@ -86,7 +86,7 @@ public class MenuPagamentos {
 
             registraPagamento(idFatura, valorPagamento);
 
-        } catch (FaturaNaoEncontrada e) {
+        } catch (FaturaNaoEncontradaException e) {
             System.out.println(e.getMessage() + " Tente novamente");
             return;
         } catch (InputMismatchException e) {
@@ -127,7 +127,7 @@ public class MenuPagamentos {
         }
     }
 
-    private void verificarQuitacaoFatura(int idFatura, Pagamento pagamento) throws FaturaNaoEncontrada {
+    private void verificarQuitacaoFatura(int idFatura, Pagamento pagamento) throws FaturaNaoEncontradaException {
         Fatura fatura = encontrarFaturaPorId(idFatura);
         System.out.println("Valor pago: " + fatura.getValorPago());
 
@@ -147,12 +147,12 @@ public class MenuPagamentos {
         }
     }
 
-    private Fatura encontrarFaturaPorId(int idFatura) throws FaturaNaoEncontrada {
+    private Fatura encontrarFaturaPorId(int idFatura) throws FaturaNaoEncontradaException {
         for (Fatura fatura : listaDeFaturas) {
             if (fatura.getIdFatura() == idFatura) {
                 return fatura;
             }
         }
-        throw new FaturaNaoEncontrada("Fatura não encontrada.");
+        throw new FaturaNaoEncontradaException("Fatura não encontrada.");
     }
 }
