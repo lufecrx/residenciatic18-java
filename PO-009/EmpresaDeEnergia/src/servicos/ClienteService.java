@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import dao.ClienteDAO;
 import entidades.Cliente;
 import entidades.Imovel;
 import util.ImovelNaoEncontradoException;
@@ -85,7 +86,8 @@ public class ClienteService {
 
             Cliente cliente = new Cliente(nome, cpf, imovelDoCliente);
             clientes.add(cliente);
-
+            
+            ClienteDAO.criar(cliente);
         } catch (ImovelNaoEncontradoException e) {
             System.out.println(e.getMessage());
             return;
@@ -130,6 +132,7 @@ public class ClienteService {
 
         if (clienteRemovido) {
             System.out.println("Cliente removido com sucesso.");
+            ClienteDAO.deletar(cpf);
         } else {
             System.out.println("Cliente não encontrado.");
         }
@@ -147,6 +150,7 @@ public class ClienteService {
                             System.out.println("Cliente encontrado. Informações atuais:");
                             System.out.println("Nome: " + clienteEncontrado.getNome());
                             System.out.println("CPF: " + clienteEncontrado.getCpf());
+                            System.out.println("Propriedade: " + clienteEncontrado.getPropriedade().getMatricula() + ", " + clienteEncontrado.getPropriedade().getEndereco());
 
                             // Permitir ao usuário alterar informações
                             System.out.println("Digite o novo nome (ou pressione Enter para manter o atual): ");
@@ -154,6 +158,20 @@ public class ClienteService {
                             if (!novoNome.isEmpty()) {
                                 clienteEncontrado.setNome(novoNome);
                             }
+
+                            try { 
+                                System.out.println("Digite a matricula da nova propriedade (ou pressione Enter para manter a atual): ");
+                                String novaMatricula = scanner.nextLine();
+                                if (!novaMatricula.isEmpty()) {
+                                    clienteEncontrado.setPropriedade(imovelService.getImovelPelaMatricula(novaMatricula));
+                                }
+                            } catch (ImovelNaoEncontradoException e) {
+                                System.out.println(e.getMessage());
+                                return;
+                            }
+
+                            // Atualizar no BD
+                            ClienteDAO.atualizar(clienteEncontrado);
 
                             System.out.println("Alterações concluídas com sucesso!");
                         },
