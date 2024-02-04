@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import dao.FaturaDAO;
 import dao.PagamentoDAO;
+import dao.ReembolsoDAO;
 import entidades.Fatura;
 import entidades.Pagamento;
 import entidades.Reembolso;
@@ -143,6 +144,7 @@ public class PagamentoService {
                     Reembolso novoReembolso = new Reembolso(fatura.getIdFatura(), valorEmExcesso,
                             Calendar.getInstance());
                     reembolsos.add(novoReembolso);
+                    ReembolsoDAO.criar(novoReembolso);
                 }
             }
             System.out.println("Valor pago: " + fatura.getValorPago());
