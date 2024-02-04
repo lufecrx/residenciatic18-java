@@ -137,11 +137,9 @@ public class PagamentoService {
 
     private void verificarQuitacaoFatura(String idFatura, Pagamento pagamento) throws FaturaNaoEncontradaException {
         Fatura fatura = faturaService.encontrarPorId(idFatura);
-        System.out.println("Valor pago: " + fatura.getValorPago());
 
         if (fatura != null && !fatura.isQuitado()) {
             fatura.adicionarPagamento(pagamento);
-            PagamentoDAO.criar(pagamento);
             if (fatura.isQuitado()) {
                 // Se o valor pago for maior que o valor calculado, gerar reembolso
                 double valorEmExcesso = (fatura.getValorPago() - fatura.getValor());
@@ -153,6 +151,7 @@ public class PagamentoService {
                 }
             }
             System.out.println("Valor pago: " + fatura.getValorPago());
+            PagamentoDAO.criar(pagamento);
             FaturaDAO.atualizar(fatura);
         }
     }

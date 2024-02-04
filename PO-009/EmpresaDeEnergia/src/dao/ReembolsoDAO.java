@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import entidades.Fatura;
 import entidades.Reembolso;
 import servicos.FaturaService;
+import util.GerenciadorDeData;
 
 public class ReembolsoDAO {
 
@@ -21,7 +21,7 @@ public class ReembolsoDAO {
             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, reembolso.getIdFatura());
             statement.setString(2, reembolso.getValor().toString());
-            statement.setString(3, reembolso.dataParaString());
+            statement.setString(3, GerenciadorDeData.calendarParaString(reembolso.getData()));
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -44,7 +44,7 @@ public class ReembolsoDAO {
 
                 // Converter valores
                 double valorPagamento = Double.parseDouble(valor);
-                Calendar dataPagamento = Fatura.stringParaCalendar(data);
+                Calendar dataPagamento = GerenciadorDeData.stringParaCalendar(data);
                 
                 Reembolso reembolso = new Reembolso(idFatura, valorPagamento, dataPagamento);
                 reembolsos.add(reembolso);
@@ -72,7 +72,7 @@ public class ReembolsoDAO {
 
                 // Converter valores
                 double valorReembolso = Double.parseDouble(valor);
-                Calendar dataReembolso = Fatura.stringParaCalendar(data);
+                Calendar dataReembolso = GerenciadorDeData.stringParaCalendar(data);
 
                 return new Reembolso(idFatura, valorReembolso, dataReembolso);
             }
@@ -90,7 +90,7 @@ public class ReembolsoDAO {
         try (Connection connection = DataAcessObject.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, reembolso.getValor().toString());
-            statement.setString(2, reembolso.dataParaString());
+            statement.setString(2, GerenciadorDeData.calendarParaString(reembolso.getData()));
             statement.setString(3, reembolso.getIdFatura());
             statement.executeUpdate();
             return true;

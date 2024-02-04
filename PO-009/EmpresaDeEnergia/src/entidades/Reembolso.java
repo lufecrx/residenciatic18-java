@@ -1,9 +1,7 @@
 package entidades;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class Reembolso {
     private String idFatura;
@@ -26,20 +24,5 @@ public class Reembolso {
 
     public Calendar getData() {
         return data;
-    }
-
-    public String dataParaString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(data.getTime());
-	}
-
-	public static Calendar stringParaCalendar(String dateString) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = sdf.parse(dateString);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        return calendar;
     }
 }

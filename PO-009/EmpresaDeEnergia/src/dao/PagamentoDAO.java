@@ -9,22 +9,23 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import entidades.Fatura;
 import entidades.Pagamento;
 import servicos.FaturaService;
+import util.GerenciadorDeData;
 
 public class PagamentoDAO {
 
     public static boolean criar(Pagamento pagamento) {
-        String query = "INSERT INTO Fatura (idFatura, valor, data) VALUES (?, ?, ?)";
+        String query = "INSERT INTO Pagamento (idFatura, valor, data) VALUES (?, ?, ?)";
         try (Connection connection = DataAcessObject.getConnection();
             PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, pagamento.getIdFatura());
             statement.setString(2, pagamento.getValor().toString());
-            statement.setString(3, pagamento.dataParaString());
+            statement.setString(3, GerenciadorDeData.calendarParaString(pagamento.getData()));
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
+            System.out.println("Erro ao criar pagamento: " + e.getMessage());
             return false;
         }
     }
@@ -44,7 +45,7 @@ public class PagamentoDAO {
 
                 // Converter valores
                 double valorPagamento = Double.parseDouble(valor);
-                Calendar dataPagamento = Fatura.stringParaCalendar(data);
+                Calendar dataPagamento = GerenciadorDeData.stringParaCalendar(data);
                 
                 Pagamento pagamento = new Pagamento(idFatura, valorPagamento, dataPagamento);
                 pagamentos.add(pagamento);
@@ -72,7 +73,7 @@ public class PagamentoDAO {
 
                 // Converter valores
                 double valorPagamento = Double.parseDouble(valor);
-                Calendar dataPagamento = Fatura.stringParaCalendar(data);
+                Calendar dataPagamento = GerenciadorDeData.stringParaCalendar(data);
 
                 return new Pagamento(idFatura, valorPagamento, dataPagamento);
             }
@@ -90,7 +91,7 @@ public class PagamentoDAO {
         try (Connection connection = DataAcessObject.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, pagamento.getValor().toString());
-            statement.setString(2, pagamento.dataParaString());
+            statement.setString(2, GerenciadorDeData.calendarParaString(pagamento.getData()));
             statement.setString(3, pagamento.getIdFatura());
             statement.executeUpdate();
             return true;

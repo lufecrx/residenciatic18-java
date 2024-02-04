@@ -1,10 +1,7 @@
 package entidades;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 public class Fatura {
@@ -33,24 +30,21 @@ public class Fatura {
 		quitado = false;
 	}
 
+	public Fatura (String idFatura, Imovel imovelAssociado, double penultimaLeitura, double ultimaLeitura, Calendar data, double valor) {
+		this.idFatura = idFatura;
+		this.imovelAssociado = imovelAssociado;
+		this.penultimaLeitura = penultimaLeitura;
+		this.ultimaLeitura = ultimaLeitura;
+		this.data = data;
+		this.valor = valor;
+		this.pagamentos = new ArrayList<>();
+		this.reembolsos = new ArrayList<>();
+		quitado = false;	
+	}
+
 	public Calendar getData() {
 		return data;
 	}
-
-	public String dataParaString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		return sdf.format(data.getTime());
-	}
-
-	public static Calendar stringParaCalendar(String dateString) throws ParseException {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = sdf.parse(dateString);
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-
-        return calendar;
-    }
 
 	public void setData(Calendar data) {
 		this.data = data;

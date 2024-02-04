@@ -9,6 +9,7 @@ import dao.FaturaDAO;
 import entidades.Fatura;
 import entidades.Imovel;
 import util.FaturaNaoEncontradaException;
+import util.GerenciadorDeData;
 import util.ImovelNaoEncontradoException;
 
 public class FaturaService {
@@ -106,7 +107,7 @@ public class FaturaService {
 
         for (Fatura fatura : faturas) {
             System.out.println("ID: " + fatura.getIdFatura());
-            System.out.println("Data: " + fatura.getData().getTime());
+            System.out.println("Data: " + GerenciadorDeData.calendarParaString(fatura.getData()));
             System.out.println("Última Leitura: " + fatura.getUltimaLeitura());
             System.out.println("Penúltima Leitura: " + fatura.getPenultimaLeitura());
             System.out.println("Valor Calculado: " + fatura.getValor());
@@ -129,7 +130,7 @@ public class FaturaService {
         for (Fatura fatura : faturas) {
             if (!fatura.isQuitado()) {
                 System.out.println("ID: " + fatura.getIdFatura());
-                System.out.println("Data: " + fatura.getData().getTime());
+                System.out.println("Data: " + GerenciadorDeData.calendarParaString(fatura.getData()));
                 System.out.println("Última Leitura: " + fatura.getUltimaLeitura());
                 System.out.println("Penúltima Leitura: " + fatura.getPenultimaLeitura());
                 System.out.println("Valor Calculado: " + fatura.getValor());
@@ -139,7 +140,7 @@ public class FaturaService {
         }
         return true;
     }
-    
+
     public Fatura encontrarPorId(String idFatura) throws FaturaNaoEncontradaException {
         // Expressão lambda para encontrar a fatura pelo ID
         return faturas.stream().filter(fatura -> fatura.getIdFatura().equals(idFatura)).findFirst()

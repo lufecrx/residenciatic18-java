@@ -12,6 +12,7 @@ import java.util.List;
 import entidades.Fatura;
 import entidades.Imovel;
 import servicos.ImovelService;
+import util.GerenciadorDeData;
 import util.ImovelNaoEncontradoException;
 
 public class FaturaDAO {
@@ -20,11 +21,11 @@ public class FaturaDAO {
         String query = "INSERT INTO Fatura (idFatura, imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = DataAcessObject.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, fatura.gerarIdFatura(fatura.getImovelAssociado(), fatura.getData()));
+            statement.setString(1, fatura.getIdFatura());
             statement.setString(2, fatura.getImovelAssociado().getMatricula());
             statement.setString(3, fatura.getPenultimaLeitura().toString());
             statement.setString(4, fatura.getUltimaLeitura().toString());
-            statement.setString(5, fatura.dataParaString());
+            statement.setString(5, GerenciadorDeData.calendarParaString(fatura.getData()));
             statement.setString(6, fatura.getValor().toString());
             statement.executeUpdate();
             return true;
@@ -35,7 +36,7 @@ public class FaturaDAO {
     }
 
     public static List<Fatura> retornarTodos(ImovelService imovelService) {
-        String query = "SELECT imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor FROM Fatura";
+        String query = "SELECT idFatura, imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor FROM Fatura";
         List<Fatura> faturas = new ArrayList<>();
 
         try (Connection connection = DataAcessObject.getConnection()) {
@@ -43,6 +44,7 @@ public class FaturaDAO {
             ResultSet resultSet = statement.executeQuery();
 
             while (resultSet.next()) {
+                String idFatura = resultSet.getString("idFatura");
                 String matricula = resultSet.getString("imovelAssociado");
                 String leitura1 = resultSet.getString("penultimaLeitura");
                 String leitura2 = resultSet.getString("ultimaLeitura");
@@ -53,10 +55,10 @@ public class FaturaDAO {
                 Imovel imovel = imovelService.retornarPelaMatricula(matricula);
                 double penultimaLeitura = Double.parseDouble(leitura1);
                 double ultimaLeitura = Double.parseDouble(leitura2);
-                Calendar dataFatura = Fatura.stringParaCalendar(data);                
+                Calendar dataFatura = GerenciadorDeData.stringParaCalendar(data);                
                 double valorFatura = Double.parseDouble(valor);
                 
-                Fatura fatura = new Fatura(imovel, penultimaLeitura, ultimaLeitura, dataFatura, valorFatura);
+                Fatura fatura = new Fatura(idFatura, imovel, penultimaLeitura, ultimaLeitura, dataFatura, valorFatura);
                 faturas.add(fatura);
             }
 
@@ -88,7 +90,7 @@ public class FaturaDAO {
                 Imovel imovel = imovelService.retornarPelaMatricula(matricula);
                 double penultimaLeitura = Double.parseDouble(leitura1);
                 double ultimaLeitura = Double.parseDouble(leitura2);
-                Calendar dataFatura = Fatura.stringParaCalendar(data);                
+                Calendar dataFatura = GerenciadorDeData.stringParaCalendar(data);                
                 double valorFatura = Double.parseDouble(valor);
 
                 return new Fatura(imovel, penultimaLeitura, ultimaLeitura, dataFatura, valorFatura);
@@ -130,6 +132,3 @@ public class FaturaDAO {
     }
 
 }
-
-// Consertar o pagamento da fatura 
-// Melhorar mensagens para o usuário
