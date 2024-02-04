@@ -22,8 +22,10 @@ public class PagamentoService {
     private Scanner scanner;
 
     public PagamentoService(Scanner scanner, FaturaService faturaService) {
-        this.pagamentos = PagamentoDAO.retornarTodos(faturaService) == null ? new ArrayList<>() : PagamentoDAO.retornarTodos(faturaService);
-        this.reembolsos = ReembolsoDAO.retornarTodos(faturaService) == null ? new ArrayList<>() : ReembolsoDAO.retornarTodos(faturaService);
+        this.pagamentos = PagamentoDAO.retornarTodos(faturaService) == null ? new ArrayList<>()
+                : PagamentoDAO.retornarTodos(faturaService);
+        this.reembolsos = ReembolsoDAO.retornarTodos(faturaService) == null ? new ArrayList<>()
+                : ReembolsoDAO.retornarTodos(faturaService);
         this.faturaService = faturaService;
         this.scanner = scanner;
     }
@@ -76,31 +78,34 @@ public class PagamentoService {
     }
 
     public void incluirPagamento() {
-        faturaService.listarAbertas();
+        if (faturaService.listarAbertas()) {
 
-        System.out.println("==== Inclusão de Pagamento ====");
-        System.out.println("Digite o ID da fatura associada ao pagamento: ");
+            System.out.println("==== Inclusão de Pagamento ====");
+            System.out.println("Digite o ID da fatura associada ao pagamento: ");
 
-        try {
-            String idFatura = scanner.nextLine();
+            try {
+                String idFatura = scanner.nextLine();
 
-            System.out.println("Digite o valor do pagamento: ");
-            double valorPagamento = scanner.nextDouble();
-            scanner.nextLine(); // Consumir a quebra de linha
+                System.out.println("Digite o valor do pagamento: ");
+                double valorPagamento = scanner.nextDouble();
+                scanner.nextLine(); // Consumir a quebra de linha
 
-            registraPagamento(idFatura, valorPagamento);
-        } catch (FaturaNaoEncontradaException e) {
-            System.out.println(e.getMessage() + " Tente novamente");
-            return;
-        } catch (InputMismatchException e) {
-            System.out.println("Entrada inválida. Tente novamente");
-            return;
-        } catch (Exception e) {
-            System.out.println("Erro inesperado. Tente novamente");
-            return;
+                registraPagamento(idFatura, valorPagamento);
+            } catch (FaturaNaoEncontradaException e) {
+                System.out.println(e.getMessage() + " Tente novamente");
+                return;
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Tente novamente");
+                return;
+            } catch (Exception e) {
+                System.out.println("Erro inesperado. Tente novamente");
+                return;
+            }
+
+            System.out.println("Pagamento registrado com sucesso.");
+        } else {
+            System.out.println("Não tem como registrar novos pagamentos enquanto não houver nenhuma fatura aberta.");
         }
-
-        System.out.println("Pagamento registrado com sucesso.");
 
     }
 

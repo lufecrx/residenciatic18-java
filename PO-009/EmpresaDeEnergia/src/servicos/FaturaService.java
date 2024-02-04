@@ -96,12 +96,12 @@ public class FaturaService {
         System.out.println("Fatura criada com sucesso!");
     }
 
-    public void listarTodas() {
+    public boolean listarTodas() {
         System.out.println("==== Lista de Todas as Faturas ====");
 
         if (faturas.isEmpty()) {
             System.out.println("Nenhuma fatura encontrada.");
-            return;
+            return false;
         }
 
         for (Fatura fatura : faturas) {
@@ -115,14 +115,15 @@ public class FaturaService {
             System.out.println("Quitado: " + (fatura.isQuitado() ? "Sim" : "Não"));
             System.out.println("------------------------------------");
         }
+        return true;
     }
 
-    public void listarAbertas() {
+    public boolean listarAbertas() {
         System.out.println("==== Lista de Faturas em Aberto ====");
 
         if (faturas.stream().allMatch(Fatura::isQuitado)) {
             System.out.println("Nenhuma fatura em aberto encontrada.");
-            return;
+            return false;
         }
 
         for (Fatura fatura : faturas) {
@@ -136,8 +137,9 @@ public class FaturaService {
                 System.out.println("------------------------------------");
             }
         }
+        return true;
     }
-
+    
     public Fatura encontrarPorId(String idFatura) throws FaturaNaoEncontradaException {
         // Expressão lambda para encontrar a fatura pelo ID
         return faturas.stream().filter(fatura -> fatura.getIdFatura().equals(idFatura)).findFirst()
