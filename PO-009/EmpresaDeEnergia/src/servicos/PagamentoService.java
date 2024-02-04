@@ -6,6 +6,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import dao.FaturaDAO;
 import entidades.Fatura;
 import entidades.Pagamento;
 import entidades.Reembolso;
@@ -144,7 +145,7 @@ public class PagamentoService {
                 }
             }
             System.out.println("Valor pago: " + fatura.getValorPago());
-
+            FaturaDAO.atualizar(fatura);
         }
     }
 }

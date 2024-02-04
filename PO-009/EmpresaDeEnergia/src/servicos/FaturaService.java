@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 
+import dao.FaturaDAO;
 import entidades.Fatura;
 import entidades.Imovel;
 import util.FaturaNaoEncontradaException;
@@ -75,6 +76,7 @@ public class FaturaService {
 
         // Adicionar a nova fatura à lista de faturas
         faturas.add(novaFatura);
+        FaturaDAO.criar(novaFatura);
 
         // Atualizar a última leitura do imóvel
         imovel.setLeituraAnterior(leituraAtual);
