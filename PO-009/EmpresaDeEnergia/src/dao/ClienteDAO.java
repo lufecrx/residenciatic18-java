@@ -43,7 +43,7 @@ public class ClienteDAO {
                 String matriculaDoImovel = resultSet.getString("propriedade");
                 String cpf = resultSet.getString("cpf");
 
-                Imovel propriedade = imovelService.getImovelPelaMatricula(matriculaDoImovel);
+                Imovel propriedade = imovelService.retornarPelaMatricula(matriculaDoImovel);
 
                 Cliente cliente = new Cliente(nome, cpf, propriedade);
                 clientes.add(cliente);        
@@ -67,7 +67,7 @@ public class ClienteDAO {
                 String nome = resultSet.getString("nome");
                 String matriculaDoImovel = resultSet.getString("propriedade");
 
-                Imovel propriedade = imovelService.getImovelPelaMatricula(matriculaDoImovel);
+                Imovel propriedade = imovelService.retornarPelaMatricula(matriculaDoImovel);
                 return new Cliente(nome, cpf, propriedade);
             }
             return null;

@@ -160,7 +160,7 @@ public class ImovelService {
                         () -> System.out.println("Imóvel não encontrado."));
     }
 
-    public Imovel getImovelPelaMatricula(String matricula) throws ImovelNaoEncontradoException {
+    public Imovel retornarPelaMatricula(String matricula) throws ImovelNaoEncontradoException {
         // Lógica para encontrar o imóvel com a matrícula fornecida
         Optional<Imovel> imovelEncontrado = imoveis.stream()
                 .filter(imovel -> imovel.getMatricula().equals(matricula))

@@ -1,7 +1,10 @@
 package entidades;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Fatura {
@@ -9,11 +12,11 @@ public class Fatura {
 	private String idFatura;
 	private Calendar data;
 	private Imovel imovelAssociado;
-	private double ultimaLeitura;
-	private double penultimaLeitura;
+	private Double ultimaLeitura;
+	private Double penultimaLeitura;
+	private Double valor;
+	private Double valorPago;
 	private double divida;
-	private double valor;
-	private double valorPago;
 	private boolean quitado;
 	private List<Pagamento> pagamentos;
 	private List<Reembolso> reembolsos;
@@ -34,6 +37,21 @@ public class Fatura {
 		return data;
 	}
 
+	public String dataParaString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		return sdf.format(data.getTime());
+	}
+
+	public static Calendar stringParaCalendar(String dateString) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = sdf.parse(dateString);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        return calendar;
+    }
+
 	public void setData(Calendar data) {
 		this.data = data;
 	}
@@ -46,7 +64,7 @@ public class Fatura {
 		this.imovelAssociado = imovelAssociado;
 	}
 
-	public double getUltimaLeitura() {
+	public Double getUltimaLeitura() {
 		return ultimaLeitura;
 	}
 
@@ -54,7 +72,7 @@ public class Fatura {
 		this.ultimaLeitura = ultimaLeitura;
 	}
 
-	public double getPenultimaLeitura() {
+	public Double getPenultimaLeitura() {
 		return penultimaLeitura;
 	}
 
@@ -62,7 +80,7 @@ public class Fatura {
 		this.penultimaLeitura = penultimaLeitura;
 	}
 
-	public double getValor() {
+	public Double getValor() {
 		return valor;
 	}
 
@@ -74,7 +92,7 @@ public class Fatura {
 		this.valor = valor;
 	}
 
-	public double getValorPago() {
+	public Double getValorPago() {
 		return valorPago;
 	}
 

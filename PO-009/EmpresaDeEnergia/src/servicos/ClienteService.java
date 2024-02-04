@@ -82,7 +82,7 @@ public class ClienteService {
             imovelService.listar();
             System.out.println("Digite a matricula do imovel do cliente: ");
             String matricula = scanner.nextLine();
-            Imovel imovelDoCliente = imovelService.getImovelPelaMatricula(matricula);
+            Imovel imovelDoCliente = imovelService.retornarPelaMatricula(matricula);
 
             Cliente cliente = new Cliente(nome, cpf, imovelDoCliente);
             clientes.add(cliente);
@@ -163,7 +163,7 @@ public class ClienteService {
                                 System.out.println("Digite a matricula da nova propriedade (ou pressione Enter para manter a atual): ");
                                 String novaMatricula = scanner.nextLine();
                                 if (!novaMatricula.isEmpty()) {
-                                    clienteEncontrado.setPropriedade(imovelService.getImovelPelaMatricula(novaMatricula));
+                                    clienteEncontrado.setPropriedade(imovelService.retornarPelaMatricula(novaMatricula));
                                 }
                             } catch (ImovelNaoEncontradoException e) {
                                 System.out.println(e.getMessage());

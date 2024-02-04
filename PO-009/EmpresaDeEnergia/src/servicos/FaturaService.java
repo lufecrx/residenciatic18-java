@@ -57,7 +57,7 @@ public class FaturaService {
     private void registrarLeitura(ImovelService imoveis, String matriculaImovel) throws ImovelNaoEncontradoException {
         Imovel imovel = null;
 
-        imovel = imoveis.getImovelPelaMatricula(matriculaImovel);
+        imovel = imoveis.retornarPelaMatricula(matriculaImovel);
 
         // Lógica para calcular o consumo com base nas leituras do imóvel
         double leituraAtual = imovel.getLeituraAtual();
