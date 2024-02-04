@@ -17,17 +17,19 @@ import util.ImovelNaoEncontradoException;
 public class FaturaDAO {
 
     public static boolean criar(Fatura fatura) {
-        String query = "INSERT INTO Fatura (imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Fatura (idFatura, imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor) VALUES (?, ?, ?, ?, ?)";
         try (Connection connection = DataAcessObject.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, fatura.getImovelAssociado().getMatricula());
-            statement.setString(2, fatura.getPenultimaLeitura().toString());
-            statement.setString(3, fatura.getUltimaLeitura().toString());
-            statement.setString(4, fatura.dataParaString());
-            statement.setString(5, fatura.getValor().toString());
+            statement.setString(1, fatura.gerarIdFatura(fatura.getImovelAssociado(), fatura.getData()));
+            statement.setString(2, fatura.getImovelAssociado().getMatricula());
+            statement.setString(3, fatura.getPenultimaLeitura().toString());
+            statement.setString(4, fatura.getUltimaLeitura().toString());
+            statement.setString(5, fatura.dataParaString());
+            statement.setString(6, fatura.getValor().toString());
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
+            System.out.println("Erro ao criar fatura: " + e.getMessage());
             return false;
         }
     }
