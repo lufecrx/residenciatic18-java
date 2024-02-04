@@ -10,7 +10,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import entidades.Fatura;
-import entidades.Pagamento;
 import entidades.Reembolso;
 import servicos.FaturaService;
 
