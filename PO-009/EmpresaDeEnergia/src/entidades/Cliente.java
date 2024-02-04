@@ -1,14 +1,15 @@
 package entidades;
 
 public class Cliente {
-	
+
 	private String nome;
 	private String cpf;
 	private Imovel propriedade;
-	
-	public Cliente(String nome, String cpf) {
+
+	public Cliente(String nome, String cpf, Imovel propriedade) {
 		this.nome = nome;
 		this.cpf = cpf;
+		this.propriedade = propriedade;
 	}
 
 	public String getNome() {
@@ -34,8 +35,4 @@ public class Cliente {
 	public void setPropriedade(Imovel propriedade) {
 		this.propriedade = propriedade;
 	}
-	
-	
-	
-
 }

@@ -5,32 +5,31 @@ import java.util.Calendar;
 import java.util.List;
 
 public class Fatura {
-	
+
+	private String idFatura;
 	private Calendar data;
 	private Imovel imovelAssociado;
-    private static int proximoId = 1;
-    private int idFatura;
 	private double ultimaLeitura;
 	private double penultimaLeitura;
 	private double divida;
-	private double valorCalculado;
+	private double valor;
 	private double valorPago;
 	private boolean quitado;
-    private List<Pagamento> pagamentos;
-    private List<Reembolso> reembolsos;
+	private List<Pagamento> pagamentos;
+	private List<Reembolso> reembolsos;
 
-	public Fatura(Imovel imovelAssociado, double penultimaLeitura, double ultimaLeitura, Calendar dataHoraAtual, double valorCalculado) {
-        this.idFatura = proximoId++;
+	public Fatura(Imovel imovelAssociado, double penultimaLeitura, double ultimaLeitura, Calendar data, double valor) {
+		this.idFatura = gerarIdFatura(imovelAssociado, data);
 		this.imovelAssociado = imovelAssociado;
 		this.penultimaLeitura = penultimaLeitura;
 		this.ultimaLeitura = ultimaLeitura;
-		this.data = dataHoraAtual;
-		this.valorCalculado = valorCalculado;
-        this.pagamentos = new ArrayList<>();
-        this.reembolsos = new ArrayList<>();
-		quitado = false;		
+		this.data = data;
+		this.valor = valor;
+		this.pagamentos = new ArrayList<>();
+		this.reembolsos = new ArrayList<>();
+		quitado = false;
 	}
-	
+
 	public Calendar getData() {
 		return data;
 	}
@@ -63,18 +62,18 @@ public class Fatura {
 		this.penultimaLeitura = penultimaLeitura;
 	}
 
-	public double getValorCalculado() {
-		return valorCalculado;
+	public double getValor() {
+		return valor;
 	}
 
 	public List<Pagamento> getPagamentos() {
 		return pagamentos;
 	}
 
-	public void setValorCalculado(double valorCalculado) {
-		this.valorCalculado = valorCalculado;
+	public void setValor(double valor) {
+		this.valor = valor;
 	}
-	
+
 	public double getValorPago() {
 		return valorPago;
 	}
@@ -86,13 +85,13 @@ public class Fatura {
 	public void setQuitado(boolean quitado) {
 		this.quitado = quitado;
 	}
-	
-    public int getIdFatura() {
-        return idFatura;
-    }
-    
-    public double getDivida() {
+
+	public double getDivida() {
 		return divida;
+	}
+
+	public String getIdFatura() {
+		return idFatura;
 	}
 
 	public double getTotalReembolsos() {
@@ -107,40 +106,44 @@ public class Fatura {
 		quitado = true;
 	}
 
-    public void adicionarPagamento(Pagamento pagamento) {
-        pagamentos.add(pagamento);
-        
-        // Atualiza o estado da fatura quando o pagamento é registrado
-        atualizarEstadoFatura();
-    }
+	public String gerarIdFatura(Imovel imovelAssociado, Calendar data) {
+		// Mátricula do imovel + data
+		String idFatura = imovelAssociado.getMatricula() + data.getTimeInMillis();
+		return idFatura;
+	}
 
-    private void atualizarEstadoFatura() {
-        this.valorPago = pagamentos.stream().mapToDouble(Pagamento::getValor).sum();
-        
-        if (valorPago >= valorCalculado) {
-            quitado = true;
-            this.divida = 0;
-            double valorEmExcesso = valorPago - valorCalculado;
+	public double calcularTotalDosPagamentos() {
+		return pagamentos.stream().mapToDouble(Pagamento::getValor).sum();
+	}
 
-            if (valorEmExcesso > 0) {
-                // Gera um reembolso se houver pagamento em excesso
-                gerarReembolso(valorEmExcesso);
-            }
-        }
-        else {
-        	this.divida = valorCalculado - valorPago;        	
-        }
-    }
+	public void adicionarPagamento(Pagamento pagamento) {
+		pagamentos.add(pagamento);
 
-    private void gerarReembolso(double valorEmExcesso) {
-        // Gera um reembolso apenas se houver pagamento em excesso
-        if (valorEmExcesso > 0) {
-            Reembolso novoReembolso = new Reembolso(idFatura, valorEmExcesso, Calendar.getInstance());
-            reembolsos.add(novoReembolso);
-        }
-    }
-	
-	
-	
-	
+		// Atualiza o estado da fatura quando o pagamento é registrado
+		atualizarEstadoFatura();
+	}
+
+	private void atualizarEstadoFatura() {
+		this.valorPago = calcularTotalDosPagamentos();
+
+		if (valorPago >= valor) {
+			quitado = true;
+			this.divida = 0;
+			double valorEmExcesso = valorPago - valor;
+
+			// Gerar reembolso, se necessário
+			gerarReembolso(valorEmExcesso);
+		} else {
+			this.divida = valor - valorPago;
+		}
+	}
+
+	private void gerarReembolso(double valorEmExcesso) {
+		// Gera um reembolso apenas se houver pagamento em excesso
+		if (valorEmExcesso > 0) {
+			Reembolso novoReembolso = new Reembolso(idFatura, valorEmExcesso, Calendar.getInstance());
+			reembolsos.add(novoReembolso);
+		}
+	}
+
 }

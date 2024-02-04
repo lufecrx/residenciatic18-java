@@ -5,40 +5,39 @@ import java.util.Scanner;
 import servicos.ClienteService;
 import servicos.FaturaService;
 import servicos.ImovelService;
+import servicos.PagamentoService;
 
 public class App {
 
     private ClienteService clienteService;
     private ImovelService imovelService;
     private FaturaService faturaService;
+    private PagamentoService pagamentoService;
 
-	public static void main(String[] args) {
-		App program = new App();
-		program.Run();		
-	}
+    public static void main(String[] args) {
+        App program = new App();
+        program.Run();
+    }
 
     public void carregarEntidades(Scanner scanner) {
         // Carregar dados
-        this.clienteService = new ClienteService(scanner);
         this.imovelService = new ImovelService(scanner);
+        this.clienteService = new ClienteService(scanner, imovelService);
         this.faturaService = new FaturaService(scanner, imovelService);
+        this.pagamentoService = new PagamentoService(scanner, faturaService);
     }
-	
-	private void Run() {
+
+    private void Run() {
         Scanner scanner = new Scanner(System.in);
         carregarEntidades(scanner);
-		
-		// MenuPagamentos menuPagamentos = new MenuPagamentos(faturas);
-		// MenuFalhasReparos menuFalhasReparos = new MenuFalhasReparos(imoveis);
-		
+
         int opcao;
         do {
             System.out.println("==== Menu Principal ====");
             System.out.println("1. Gestão de Clientes");
             System.out.println("2. Gestão de Imóveis");
-            System.out.println("3. Pagamentos");
-            System.out.println("4. Faturas");
-            System.out.println("5. Falhas e Reparos");
+            System.out.println("3. Gestão de Pagamentos");
+            System.out.println("4. Gestão de Faturas");
             System.out.println("0. Sair");
             System.out.print("Escolha a opção: ");
 
@@ -53,13 +52,10 @@ public class App {
                     imovelService.exibirMenu();
                     break;
                 case 3:
-                    // menuPagamentos.exibirMenu();
+                    pagamentoService.exibirMenu();
                     break;
                 case 4:
                     faturaService.exibirMenu();
-                    break;
-                case 5:
-                    // menuFalhasReparos.exibirMenu();
                     break;
                 case 0:
                     System.out.println("Encerrando a aplicação...");
@@ -69,5 +65,5 @@ public class App {
             }
         } while (opcao != 0);
 
-	}
+    }
 }

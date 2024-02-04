@@ -3,18 +3,18 @@ package entidades;
 import java.util.List;
 
 public class Imovel {
-	
+
 	private String matricula;
 	private String endereco;
 	private double leituraAtual;
 	private double leituraAnterior;
 	private List<Fatura> faturas;
-	
+
 	public Imovel(String matricula, String endereco) {
 		this.matricula = matricula;
 		this.endereco = endereco;
 	}
-	
+
 	public String getMatricula() {
 		return matricula;
 	}
@@ -38,7 +38,7 @@ public class Imovel {
 	public void setLeituraAtual(double leituraAtual) {
 		this.leituraAtual = leituraAtual;
 	}
-	
+
 	public double getLeituraAnterior() {
 		return leituraAnterior;
 	}
@@ -56,10 +56,7 @@ public class Imovel {
 	}
 
 	public void fazerLeitura() {
-		
+
 	}
-	
-	
-	
 
 }

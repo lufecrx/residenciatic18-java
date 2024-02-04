@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 import entidades.Fatura;
 import entidades.Imovel;
-import entidades.Pagamento;
+import util.FaturaNaoEncontradaException;
 import util.ImovelNaoEncontradoException;
 
 public class FaturaService {
@@ -56,7 +56,7 @@ public class FaturaService {
 
     private void registrarLeitura(ImovelService imoveis, String matriculaImovel) throws ImovelNaoEncontradoException {
         Imovel imovel = null;
-        
+
         imovel = imoveis.getImovelPelaMatricula(matriculaImovel);
 
         // Lógica para calcular o consumo com base nas leituras do imóvel
@@ -81,6 +81,8 @@ public class FaturaService {
     }
 
     public void criar(ImovelService imovelService) {
+        imovelService.listar();
+
         System.out.println("Digite a matrícula do imóvel: ");
         String matriculaImovel = scanner.nextLine();
         try {
@@ -101,11 +103,12 @@ public class FaturaService {
         }
 
         for (Fatura fatura : faturas) {
+            System.out.println("ID: " + fatura.getIdFatura());
             System.out.println("Data: " + fatura.getData().getTime());
             System.out.println("Última Leitura: " + fatura.getUltimaLeitura());
             System.out.println("Penúltima Leitura: " + fatura.getPenultimaLeitura());
-            System.out.println("Valor Calculado: " + fatura.getValorCalculado());
-            System.out.println("Valor Pago: " + fatura.getPagamentos().stream().mapToDouble(Pagamento::getValor).sum());
+            System.out.println("Valor Calculado: " + fatura.getValor());
+            System.out.println("Valor Pago: " + fatura.getValorPago());
             System.out.println("Valor Restante: " + fatura.getDivida());
             System.out.println("Quitado: " + (fatura.isQuitado() ? "Sim" : "Não"));
             System.out.println("------------------------------------");
@@ -122,13 +125,20 @@ public class FaturaService {
 
         for (Fatura fatura : faturas) {
             if (!fatura.isQuitado()) {
+                System.out.println("ID: " + fatura.getIdFatura());
                 System.out.println("Data: " + fatura.getData().getTime());
                 System.out.println("Última Leitura: " + fatura.getUltimaLeitura());
                 System.out.println("Penúltima Leitura: " + fatura.getPenultimaLeitura());
-                System.out.println("Valor Calculado: " + fatura.getValorCalculado());
+                System.out.println("Valor Calculado: " + fatura.getValor());
                 System.out.println("Quitado: Não");
                 System.out.println("------------------------------------");
             }
         }
+    }
+
+    public Fatura encontrarPorId(String idFatura) throws FaturaNaoEncontradaException {
+        // Expressão lambda para encontrar a fatura pelo ID
+        return faturas.stream().filter(fatura -> fatura.getIdFatura().equals(idFatura)).findFirst()
+                .orElseThrow(() -> new FaturaNaoEncontradaException("Fatura não encontrada!"));
     }
 }

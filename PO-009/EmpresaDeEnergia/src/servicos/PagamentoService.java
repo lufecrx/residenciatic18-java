@@ -1,4 +1,4 @@
-package menu;
+package servicos;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -11,18 +11,18 @@ import entidades.Pagamento;
 import entidades.Reembolso;
 import util.FaturaNaoEncontradaException;
 
-public class MenuPagamentos {
+public class PagamentoService {
 
     private List<Pagamento> pagamentos;
     private List<Reembolso> reembolsos;
-    private List<Fatura> listaDeFaturas;
+    private FaturaService faturaService;
     private Scanner scanner;
 
-    public MenuPagamentos(List<Fatura> listaDeFaturas) {
+    public PagamentoService(Scanner scanner, FaturaService faturaService) {
         this.pagamentos = new ArrayList<>();
         this.reembolsos = new ArrayList<>();
-        this.listaDeFaturas = listaDeFaturas;
-        this.scanner = new Scanner(System.in);
+        this.faturaService = faturaService;
+        this.scanner = scanner;
     }
 
     public List<Reembolso> getReembolsos() {
@@ -61,9 +61,9 @@ public class MenuPagamentos {
         } while (opcao != 0);
     }
 
-    public void registraPagamento(int idFatura, double valorPagamento) throws FaturaNaoEncontradaException {
+    public void registraPagamento(String idFatura, double valorPagamento) throws FaturaNaoEncontradaException {
         // Lógica para registrar o pagamento
-        Fatura fatura = encontrarFaturaPorId(idFatura);
+        Fatura fatura = faturaService.encontrarPorId(idFatura);
 
         Pagamento novoPagamento = new Pagamento(fatura.getIdFatura(), valorPagamento, Calendar.getInstance());
         pagamentos.add(novoPagamento);
@@ -73,15 +73,16 @@ public class MenuPagamentos {
     }
 
     public void incluirPagamento() {
+        faturaService.listarAbertas();
+
         System.out.println("==== Inclusão de Pagamento ====");
         System.out.println("Digite o ID da fatura associada ao pagamento: ");
 
         try {
-            int idFatura = scanner.nextInt();
-            scanner.nextLine(); // Consumir a quebra de linha
+            String idFatura = scanner.nextLine();
 
             System.out.println("Digite o valor do pagamento: ");
-            double valorPagamento = scanner.nextFloat();
+            double valorPagamento = scanner.nextDouble();
             scanner.nextLine(); // Consumir a quebra de linha
 
             registraPagamento(idFatura, valorPagamento);
@@ -127,15 +128,15 @@ public class MenuPagamentos {
         }
     }
 
-    private void verificarQuitacaoFatura(int idFatura, Pagamento pagamento) throws FaturaNaoEncontradaException {
-        Fatura fatura = encontrarFaturaPorId(idFatura);
+    private void verificarQuitacaoFatura(String idFatura, Pagamento pagamento) throws FaturaNaoEncontradaException {
+        Fatura fatura = faturaService.encontrarPorId(idFatura);
         System.out.println("Valor pago: " + fatura.getValorPago());
 
         if (fatura != null && !fatura.isQuitado()) {
             fatura.adicionarPagamento(pagamento);
             if (fatura.isQuitado()) {
                 // Se o valor pago for maior que o valor calculado, gerar reembolso
-                double valorEmExcesso = (fatura.getValorPago() - fatura.getValorCalculado());
+                double valorEmExcesso = (fatura.getValorPago() - fatura.getValor());
                 if (valorEmExcesso > 0) {
                     Reembolso novoReembolso = new Reembolso(fatura.getIdFatura(), valorEmExcesso,
                             Calendar.getInstance());
@@ -145,14 +146,5 @@ public class MenuPagamentos {
             System.out.println("Valor pago: " + fatura.getValorPago());
 
         }
-    }
-
-    private Fatura encontrarFaturaPorId(int idFatura) throws FaturaNaoEncontradaException {
-        for (Fatura fatura : listaDeFaturas) {
-            if (fatura.getIdFatura() == idFatura) {
-                return fatura;
-            }
-        }
-        throw new FaturaNaoEncontradaException("Fatura não encontrada.");
     }
 }

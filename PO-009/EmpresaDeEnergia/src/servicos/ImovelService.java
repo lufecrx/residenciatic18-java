@@ -65,6 +65,12 @@ public class ImovelService {
         System.out.println("Digite o endereço do imóvel: ");
         String endereco = scanner.nextLine();
 
+        // Verificar se o imóvel já está na lista
+        if (imoveis.stream().anyMatch(imovel -> imovel.getMatricula().equals(matricula))) {
+            System.out.println("Imóvel ja incluso!");
+            return;
+        }
+
         Imovel novoImovel = new Imovel(matricula, endereco);
 
         System.out.println("Leitura anterior de energia: ");
@@ -96,8 +102,7 @@ public class ImovelService {
                             System.out.println("Endereço: " + imovelEncontrado.getEndereco());
                             System.out.println("Leitura atual: " + imovelEncontrado.getLeituraAtual());
                         },
-                        () -> System.out.println("Imóvel não encontrado.")
-                );
+                        () -> System.out.println("Imóvel não encontrado."));
     }
 
     public void listar() {
@@ -148,8 +153,7 @@ public class ImovelService {
 
                             System.out.println("Alterações concluídas com sucesso!");
                         },
-                        () -> System.out.println("Imóvel não encontrado.")
-                );
+                        () -> System.out.println("Imóvel não encontrado."));
     }
 
     public Imovel getImovelPelaMatricula(String matricula) throws ImovelNaoEncontradoException {
@@ -162,8 +166,12 @@ public class ImovelService {
             Imovel imovel = imovelEncontrado.get();
             return imovel;
         } else {
-           throw new ImovelNaoEncontradoException("Imóvel com matrícula " + matricula + " não encontrado. Não foi possível criar a fatura.");
+            throw new ImovelNaoEncontradoException("Imóvel com matrícula " + matricula + " não encontrado.");
         }
+    }
+
+    public List<Imovel> getImoveis() {
+        return imoveis;
     }
 
 }
