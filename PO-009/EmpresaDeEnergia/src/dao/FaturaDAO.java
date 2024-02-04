@@ -69,7 +69,7 @@ public class FaturaDAO {
     }
 
     public static Fatura retornarPelaID(String id, ImovelService imovelService) {
-        String query = "SELECT imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor FROM Fatura WHERE id = ?";
+        String query = "SELECT imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor FROM Fatura WHERE idFatura = ?";
         try (Connection connection = DataAcessObject.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, id);

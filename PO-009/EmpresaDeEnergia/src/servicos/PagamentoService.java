@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import dao.FaturaDAO;
+import dao.PagamentoDAO;
 import entidades.Fatura;
 import entidades.Pagamento;
 import entidades.Reembolso;
@@ -87,7 +88,6 @@ public class PagamentoService {
             scanner.nextLine(); // Consumir a quebra de linha
 
             registraPagamento(idFatura, valorPagamento);
-
         } catch (FaturaNaoEncontradaException e) {
             System.out.println(e.getMessage() + " Tente novamente");
             return;
@@ -135,6 +135,7 @@ public class PagamentoService {
 
         if (fatura != null && !fatura.isQuitado()) {
             fatura.adicionarPagamento(pagamento);
+            PagamentoDAO.criar(pagamento);
             if (fatura.isQuitado()) {
                 // Se o valor pago for maior que o valor calculado, gerar reembolso
                 double valorEmExcesso = (fatura.getValorPago() - fatura.getValor());
