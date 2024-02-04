@@ -6,13 +6,20 @@ public class Imovel {
 
 	private String matricula;
 	private String endereco;
-	private double leituraAtual;
-	private double leituraAnterior;
+	private Double leituraAtual;
+	private Double leituraAnterior;
 	private List<Fatura> faturas;
 
 	public Imovel(String matricula, String endereco) {
 		this.matricula = matricula;
 		this.endereco = endereco;
+	}
+
+	public Imovel(String matricula, String endereco, double leituraAtual, double leituraAnterior) {
+		this.matricula = matricula;
+		this.endereco = endereco;
+		this.leituraAtual = leituraAtual;
+		this.leituraAnterior = leituraAnterior;
 	}
 
 	public String getMatricula() {
@@ -31,7 +38,7 @@ public class Imovel {
 		this.endereco = endereco;
 	}
 
-	public double getLeituraAtual() {
+	public Double getLeituraAtual() {
 		return leituraAtual;
 	}
 
@@ -39,7 +46,7 @@ public class Imovel {
 		this.leituraAtual = leituraAtual;
 	}
 
-	public double getLeituraAnterior() {
+	public Double getLeituraAnterior() {
 		return leituraAnterior;
 	}
 

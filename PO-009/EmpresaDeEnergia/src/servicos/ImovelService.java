@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+import dao.ImovelDAO;
 import entidades.Imovel;
 import util.ImovelNaoEncontradoException;
 
@@ -85,6 +86,7 @@ public class ImovelService {
         imoveis.add(novoImovel);
 
         System.out.println("Imóvel incluído com sucesso!");
+        ImovelDAO.criar(novoImovel);
     }
 
     public void consultar() {
@@ -125,6 +127,7 @@ public class ImovelService {
 
         if (imovelRemovido) {
             System.out.println("Imóvel removido com sucesso!");
+            ImovelDAO.deletar(matricula);
         } else {
             System.out.println("Imóvel não encontrado. Nenhum imóvel removido.");
         }
@@ -152,6 +155,7 @@ public class ImovelService {
                             }
 
                             System.out.println("Alterações concluídas com sucesso!");
+                            ImovelDAO.atualizar(imovelEncontrado);
                         },
                         () -> System.out.println("Imóvel não encontrado."));
     }
