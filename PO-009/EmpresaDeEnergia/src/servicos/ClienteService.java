@@ -82,7 +82,13 @@ public class ClienteService {
             imovelService.listar();
             System.out.println("Digite a matricula do imovel do cliente: ");
             String matricula = scanner.nextLine();
-            Imovel imovelDoCliente = imovelService.retornarPelaMatricula(matricula);
+
+            if (clientes.stream().anyMatch(cliente -> cliente.getPropriedade().getMatricula().equals(matricula))) {
+                System.out.println("Esta propriedade já é de outro cliente.");
+                return;
+            }
+
+            Imovel imovelDoCliente = imovelService.retornarPelaMatricula(matricula);            
 
             Cliente cliente = new Cliente(nome, cpf, imovelDoCliente);
             clientes.add(cliente);
