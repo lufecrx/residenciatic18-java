@@ -17,7 +17,7 @@ import util.ImovelNaoEncontradoException;
 public class FaturaDAO {
 
     public static boolean criar(Fatura fatura) {
-        String query = "INSERT INTO Fatura (idFatura, imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Fatura (idFatura, imovelAssociado, penultimaLeitura, ultimaLeitura, data, valor) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection connection = DataAcessObject.getConnection();
                 PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, fatura.gerarIdFatura(fatura.getImovelAssociado(), fatura.getData()));
@@ -130,3 +130,6 @@ public class FaturaDAO {
     }
 
 }
+
+// Consertar o pagamento da fatura 
+// Melhorar mensagens para o usuário
