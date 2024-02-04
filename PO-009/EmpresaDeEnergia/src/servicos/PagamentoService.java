@@ -22,8 +22,8 @@ public class PagamentoService {
     private Scanner scanner;
 
     public PagamentoService(Scanner scanner, FaturaService faturaService) {
-        this.pagamentos = new ArrayList<>();
-        this.reembolsos = new ArrayList<>();
+        this.pagamentos = PagamentoDAO.retornarTodos(faturaService) == null ? new ArrayList<>() : PagamentoDAO.retornarTodos(faturaService);
+        this.reembolsos = ReembolsoDAO.retornarTodos(faturaService) == null ? new ArrayList<>() : ReembolsoDAO.retornarTodos(faturaService);
         this.faturaService = faturaService;
         this.scanner = scanner;
     }

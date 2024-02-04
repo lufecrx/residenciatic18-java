@@ -16,7 +16,7 @@ public class ClienteService {
     private Scanner scanner;
 
     public ClienteService(Scanner scanner, ImovelService imovelService) {
-        this.clientes = new ArrayList<>();
+        this.clientes = ClienteDAO.retornarTodos(imovelService) == null ? new ArrayList<>() : ClienteDAO.retornarTodos(imovelService);
         this.imovelService = imovelService;
         this.scanner = scanner;
     }

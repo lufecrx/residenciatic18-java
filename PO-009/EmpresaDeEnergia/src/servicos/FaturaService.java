@@ -18,8 +18,8 @@ public class FaturaService {
     private Scanner scanner;
 
     public FaturaService(Scanner scanner, ImovelService imovelService) {
+        this.faturas = FaturaDAO.retornarTodos(imovelService) == null ? new ArrayList<>() : FaturaDAO.retornarTodos(imovelService);
         this.imovelService = imovelService;
-        this.faturas = new ArrayList<>();
         this.scanner = scanner;
     }
 

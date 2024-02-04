@@ -15,7 +15,7 @@ public class ImovelService {
     private Scanner scanner;
 
     public ImovelService(Scanner scanner) {
-        this.imoveis = new ArrayList<>();
+        this.imoveis = ImovelDAO.retornarTodos() == null ? new ArrayList<>() : ImovelDAO.retornarTodos();
         this.scanner = scanner;
     }
 
