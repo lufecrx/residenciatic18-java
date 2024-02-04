@@ -6,7 +6,6 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import dao.FaturaDAO;
 import dao.PagamentoDAO;
 import dao.ReembolsoDAO;
 import entidades.Fatura;
@@ -22,16 +21,44 @@ public class PagamentoService {
     private Scanner scanner;
 
     public PagamentoService(Scanner scanner, FaturaService faturaService) {
-        this.pagamentos = PagamentoDAO.retornarTodos(faturaService) == null ? new ArrayList<>()
-                : PagamentoDAO.retornarTodos(faturaService);
-        this.reembolsos = ReembolsoDAO.retornarTodos(faturaService) == null ? new ArrayList<>()
-                : ReembolsoDAO.retornarTodos(faturaService);
         this.faturaService = faturaService;
         this.scanner = scanner;
+        carregarPagamentos();
+        carregarReembolsos();
     }
 
-    public List<Reembolso> getReembolsos() {
-        return reembolsos;
+    private void carregarPagamentos() {
+        this.pagamentos = PagamentoDAO.retornarTodos(faturaService);
+
+        if (this.pagamentos == null) {
+            this.pagamentos = new ArrayList<>();
+        }
+        
+        try {
+            for (Pagamento pagamento : this.pagamentos) {
+                Fatura fatura = faturaService.encontrarPorId(pagamento.getIdFatura());
+                fatura.adicionarPagamento(pagamento);
+            }
+        } catch (FaturaNaoEncontradaException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void carregarReembolsos() {
+        this.reembolsos = ReembolsoDAO.retornarTodos(faturaService);
+
+        if (this.reembolsos == null) {
+            this.reembolsos = new ArrayList<>();
+        }
+
+        try {
+            for (Reembolso reembolso : this.reembolsos) {
+                Fatura fatura = faturaService.encontrarPorId(reembolso.getIdFatura());
+                fatura.adicionarReembolso(reembolso);
+            }
+        } catch (FaturaNaoEncontradaException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public void exibirMenu() {
@@ -47,18 +74,23 @@ public class PagamentoService {
             opcao = scanner.nextInt();
             scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
+            System.out.println();
             switch (opcao) {
                 case 1:
                     incluirPagamento();
+                    System.out.println();
                     break;
                 case 2:
                     listarPagamentos();
+                    System.out.println();
                     break;
                 case 3:
                     listarReembolsos();
+                    System.out.println();
                     break;
                 case 0:
                     System.out.println("Voltando para o Menu Principal...");
+                    System.out.println();
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
@@ -154,7 +186,6 @@ public class PagamentoService {
             }
             System.out.println("Valor pago: " + fatura.getValorPago());
             PagamentoDAO.criar(pagamento);
-            FaturaDAO.atualizar(fatura);
         }
     }
 }

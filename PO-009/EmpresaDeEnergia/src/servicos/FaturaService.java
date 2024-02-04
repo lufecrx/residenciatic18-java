@@ -37,18 +37,23 @@ public class FaturaService {
             opcao = scanner.nextInt();
             scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
+            System.out.println();
             switch (opcao) {
                 case 1:
                     criar(imovelService);
+                    System.out.println();
                     break;
                 case 2:
                     listarTodas();
+                    System.out.println();
                     break;
                 case 3:
                     listarAbertas();
+                    System.out.println();
                     break;
                 case 0:
                     System.out.println("Voltando para o Menu Principal...");
+                    System.out.println();
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");
@@ -136,7 +141,9 @@ public class FaturaService {
                 System.out.println("Última Leitura: " + fatura.getUltimaLeitura());
                 System.out.println("Penúltima Leitura: " + fatura.getPenultimaLeitura());
                 System.out.println("Valor Calculado: " + fatura.getValor());
-                System.out.println("Quitado: Não");
+                System.out.println("Valor Pago: " + fatura.getValorPago());
+                System.out.println("Valor Restante: " + fatura.getDivida());
+                System.out.println("Quitado: " + (fatura.isQuitado() ? "Sim" : "Não"));
                 System.out.println("------------------------------------");
             }
         }

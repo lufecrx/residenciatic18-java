@@ -106,7 +106,7 @@ public class FaturaDAO {
     }
 
     public static boolean atualizar(Fatura fatura) {
-        String query = "UPDATE Fatura SET valorPago = ?,  WHERE idFatura = ?";
+        String query = "uPDATE Fatura SET valorPago = ? WHERE idFatura = ?";
         try (Connection connection = DataAcessObject.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(query);
             statement.setString(1, fatura.getValorPago().toString());
@@ -114,6 +114,7 @@ public class FaturaDAO {
             statement.executeUpdate();
             return true;
         } catch (SQLException e) {
+            System.out.println("Erro ao atualizar fatura: " + e.getMessage());
             return false;
         }
     }

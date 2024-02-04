@@ -36,24 +36,31 @@ public class ClienteService {
             opcao = scanner.nextInt();
             scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
+            System.out.println();
             switch (opcao) {
                 case 1:
                     incluir();
+                    System.out.println();
                     break;
                 case 2:
                     consultar();
+                    System.out.println();
                     break;
                 case 3:
                     listar();
+                    System.out.println();
                     break;
                 case 4:
                     excluir();
+                    System.out.println();
                     break;
                 case 5:
                     alterar();
+                    System.out.println();
                     break;
                 case 0:
                     System.out.println("Voltando para o Menu Principal...");
+                    System.out.println();
                     break;
                 default:
                     System.out.println("Opção inválida. Tente novamente.");

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import dao.FaturaDAO;
+
 public class Fatura {
 
 	private String idFatura;
@@ -12,7 +14,7 @@ public class Fatura {
 	private Double ultimaLeitura;
 	private Double penultimaLeitura;
 	private Double valor;
-	private Double valorPago;
+	private double valorPago;
 	private double divida;
 	private boolean quitado;
 	private List<Pagamento> pagamentos;
@@ -25,6 +27,7 @@ public class Fatura {
 		this.ultimaLeitura = ultimaLeitura;
 		this.data = data;
 		this.valor = valor;
+		this.divida = valor;
 		this.pagamentos = new ArrayList<>();
 		this.reembolsos = new ArrayList<>();
 		quitado = false;
@@ -37,6 +40,7 @@ public class Fatura {
 		this.ultimaLeitura = ultimaLeitura;
 		this.data = data;
 		this.valor = valor;
+		this.divida = valor;
 		this.pagamentos = new ArrayList<>();
 		this.reembolsos = new ArrayList<>();
 		quitado = false;	
@@ -106,14 +110,6 @@ public class Fatura {
 		return idFatura;
 	}
 
-	public double getTotalReembolsos() {
-		return reembolsos.stream().mapToDouble(Reembolso::getValor).sum();
-	}
-
-	public List<Reembolso> getReembolsos() {
-		return reembolsos;
-	}
-
 	public void quitarFatura() {
 		quitado = true;
 	}
@@ -130,32 +126,23 @@ public class Fatura {
 
 	public void adicionarPagamento(Pagamento pagamento) {
 		pagamentos.add(pagamento);
-
 		// Atualiza o estado da fatura quando o pagamento é registrado
 		atualizarEstadoFatura();
+	}
+
+	public void adicionarReembolso(Reembolso reembolso) {
+		reembolsos.add(reembolso);
 	}
 
 	private void atualizarEstadoFatura() {
 		this.valorPago = calcularTotalDosPagamentos();
 
-		if (valorPago >= valor) {
-			quitado = true;
-			this.divida = 0;
-			double valorEmExcesso = valorPago - valor;
-
-			// Gerar reembolso, se necessário
-			gerarReembolso(valorEmExcesso);
-		} else {
+		if (valor > valorPago) {
 			this.divida = valor - valorPago;
+		} else {
+			this.quitado = true;
+			this.divida = 0;
 		}
+		FaturaDAO.atualizar(this);
 	}
-
-	private void gerarReembolso(double valorEmExcesso) {
-		// Gera um reembolso apenas se houver pagamento em excesso
-		if (valorEmExcesso > 0) {
-			Reembolso novoReembolso = new Reembolso(idFatura, valorEmExcesso, Calendar.getInstance());
-			reembolsos.add(novoReembolso);
-		}
-	}
-
 }
