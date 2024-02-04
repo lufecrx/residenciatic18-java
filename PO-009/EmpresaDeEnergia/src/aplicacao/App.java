@@ -21,6 +21,7 @@ public class App {
 
     public void carregarEntidades(Scanner scanner) {
         // Carregar dados
+        System.out.println("Carregando dados, aguarde...");
         this.imovelService = new ImovelService(scanner);
         this.clienteService = new ClienteService(scanner, imovelService);
         this.faturaService = new FaturaService(scanner, imovelService);

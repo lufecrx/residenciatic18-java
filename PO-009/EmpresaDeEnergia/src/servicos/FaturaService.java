@@ -77,7 +77,9 @@ public class FaturaService {
 
         // Adicionar a nova fatura à lista de faturas
         faturas.add(novaFatura);
+        System.out.println("Criando a fatura no sistema...");
         FaturaDAO.criar(novaFatura);
+        System.out.println("Fatura criada com sucesso!");
 
         // Atualizar a última leitura do imóvel
         imovel.setLeituraAnterior(leituraAtual);

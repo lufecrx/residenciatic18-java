@@ -92,7 +92,8 @@ public class ClienteService {
 
             Cliente cliente = new Cliente(nome, cpf, imovelDoCliente);
             clientes.add(cliente);
-            
+
+            System.out.println("Incluindo o cliente no sistema...");
             ClienteDAO.criar(cliente);
         } catch (ImovelNaoEncontradoException e) {
             System.out.println(e.getMessage());
@@ -137,8 +138,9 @@ public class ClienteService {
         boolean clienteRemovido = clientes.removeIf(cliente -> cliente.getCpf().equals(cpf));
 
         if (clienteRemovido) {
-            System.out.println("Cliente removido com sucesso.");
+            System.out.println("Removendo o cliente do sistema...");
             ClienteDAO.deletar(cpf);
+            System.out.println("Cliente removido com sucesso.");
         } else {
             System.out.println("Cliente não encontrado.");
         }
@@ -176,7 +178,8 @@ public class ClienteService {
                                 return;
                             }
 
-                            // Atualizar no BD
+                            System.out.println("Alterando o cliente no sistema...");
+
                             ClienteDAO.atualizar(clienteEncontrado);
 
                             System.out.println("Alterações concluídas com sucesso!");

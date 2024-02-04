@@ -90,6 +90,7 @@ public class PagamentoService {
                 double valorPagamento = scanner.nextDouble();
                 scanner.nextLine(); // Consumir a quebra de linha
 
+                System.out.println("Registrando pagamento...");
                 registraPagamento(idFatura, valorPagamento);
             } catch (FaturaNaoEncontradaException e) {
                 System.out.println(e.getMessage() + " Tente novamente");
@@ -148,6 +149,7 @@ public class PagamentoService {
                             Calendar.getInstance());
                     reembolsos.add(novoReembolso);
                     ReembolsoDAO.criar(novoReembolso);
+                    System.out.println("Reembolso gerado. Valor: " + novoReembolso.getValor());
                 }
             }
             System.out.println("Valor pago: " + fatura.getValorPago());

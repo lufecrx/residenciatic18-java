@@ -85,8 +85,9 @@ public class ImovelService {
 
         imoveis.add(novoImovel);
 
-        System.out.println("Imóvel incluído com sucesso!");
+        System.out.println("Incluindo novo imóvel...");
         ImovelDAO.criar(novoImovel);
+        System.out.println("Imóvel incluído com sucesso!");
     }
 
     public void consultar() {
@@ -126,8 +127,9 @@ public class ImovelService {
         boolean imovelRemovido = imoveis.removeIf(imovel -> imovel.getMatricula().equals(matricula));
 
         if (imovelRemovido) {
-            System.out.println("Imóvel removido com sucesso!");
+            System.out.println("Removendo imóvel do sistema...");
             ImovelDAO.deletar(matricula);
+            System.out.println("Imóvel removido com sucesso!");
         } else {
             System.out.println("Imóvel não encontrado. Nenhum imóvel removido.");
         }
@@ -154,8 +156,9 @@ public class ImovelService {
                                 imovelEncontrado.setEndereco(novoEndereco);
                             }
 
-                            System.out.println("Alterações concluídas com sucesso!");
+                            System.out.println("Alterando imóvel...");
                             ImovelDAO.atualizar(imovelEncontrado);
+                            System.out.println("Alterações concluídas com sucesso!");
                         },
                         () -> System.out.println("Imóvel não encontrado."));
     }
