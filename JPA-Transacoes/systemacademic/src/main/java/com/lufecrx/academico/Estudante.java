@@ -3,18 +3,24 @@ package com.lufecrx.academico;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Estudante {
     @Id
-    @GeneratedValue (strategy = javax.persistence.GenerationType.AUTO)
+    @GeneratedValue (strategy = javax.persistence.GenerationType.IDENTITY)
     private Integer id;
+    @ManyToOne
+    @JoinColumn (name = "curso")
+    private Curso curso;
     private String nome;
     private String email;
     private String matricula;
 
-    Estudante (String nome, String email, String matricula) {
+    public Estudante (Curso curso, String nome, String email, String matricula) {
         this.id = null;
+        this.curso = curso;
         this.nome = nome;
         this.email = email;
         this.matricula = matricula;
