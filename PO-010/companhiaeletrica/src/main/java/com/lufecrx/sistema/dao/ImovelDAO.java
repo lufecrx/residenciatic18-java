@@ -1,106 +1,64 @@
 package com.lufecrx.sistema.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import com.lufecrx.sistema.entidades.Imovel;
 
 public class ImovelDAO {
 
-    public static boolean criar(Imovel imovel) {
-        String query = "INSERT INTO Imovel (endereco, leituraAtual, leituraAnterior, matricula) VALUES (?, ?, ?, ?)";
-        try (Connection connection = DataAcessObject.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, imovel.getEndereco());
-            statement.setString(2, imovel.getLeituraAtual().toString());
-            statement.setString(3, imovel.getLeituraAnterior().toString());
-            statement.setString(4, imovel.getMatricula());
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+    public static void criar(Imovel imovel, EntityManager entityManager) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(imovel);
+        entityManager.getTransaction().commit();
     }
 
-    public static List<Imovel> retornarTodos() {
-        String query = "SELECT matricula, endereco, leituraAtual, leituraAnterior FROM Imovel";
-        List<Imovel> imoveis = new ArrayList<>();
+    public static List<Imovel> retornarTodos(EntityManager entityManager) {
+        String jpql = "Select i FROM Imovel i";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
+        TypedQuery<Imovel> query = entityManager.createQuery(jpql, Imovel.class);
+        List<Imovel> imoveis = query.getResultList();
 
-            while (resultSet.next()) {
-                String matricula = resultSet.getString("matricula");
-                String endereco = resultSet.getString("endereco");
-                String leitura1 = resultSet.getString("leituraAtual");
-                String leitura2 = resultSet.getString("leituraAnterior");
-
-                // Converter leituras para double
-                double leituraAtual = Double.parseDouble(leitura1);
-                double leituraAnterior = Double.parseDouble(leitura2);
-
-                Imovel imovel = new Imovel(matricula, endereco, leituraAtual, leituraAnterior);
-                imoveis.add(imovel);
-            }
-            return imoveis;
-        } catch (SQLException e) {
-            return null;
-        }
+        return imoveis;
     }
 
-    public static Imovel retornarPelaMatricula(String matricula) {
-        String query = "SELECT matricula, endereco, leituraAtual, leituraAnterior FROM Imovel WHERE matricula = ?";
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, matricula);
-            ResultSet resultSet = statement.executeQuery();
+    public static Imovel retornarPelaMatricula(String matricula, EntityManager entityManager) {
+        String jpql = "Select i FROM Imovel i WHERE i.matricula = :matricula";
 
-            if (resultSet.next()) {
-                String endereco = resultSet.getString("endereco");
-                String leitura1 = resultSet.getString("leituraAtual");
-                String leitura2 = resultSet.getString("leituraAnterior");
+        TypedQuery<Imovel> query = entityManager.createQuery(jpql, Imovel.class);
+        query.setParameter("matricula", matricula);
+        Imovel imovel = query.getSingleResult();
 
-                // Converter leituras para double
-                double leituraAtual = Double.parseDouble(leitura1);
-                double leituraAnterior = Double.parseDouble(leitura2);
-
-                return new Imovel(matricula, endereco, leituraAtual, leituraAnterior);
-            }
-            return null;
-        } catch (SQLException e) {
-            return null;
-        }
+        return imovel;        
     }
 
-    public static boolean atualizar(Imovel imovel) {
-        String query = "UPDATE Imovel SET endereco = ? WHERE matricula = ?";
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, imovel.getEndereco());
-            statement.setString(2, imovel.getMatricula());
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+    public static void atualizar(Imovel imovel, EntityManager entityManager) {
+        String jpql = "SELECT i FROM Imovel i WHERE i.matricula = :matricula";
+
+        TypedQuery<Imovel> query = entityManager.createQuery(jpql, Imovel.class);
+        query.setParameter("matricula", imovel.getMatricula());
+
+        Imovel imovelAtualizado = query.getSingleResult();
+        imovelAtualizado.setEndereco(imovel.getEndereco());
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(imovelAtualizado);
+        entityManager.getTransaction().commit();
     }
 
-    public static boolean deletar(String matricula) {
-        String query = "DELETE FROM Imovel WHERE matricula = ?";
+    public static void deletar(String matricula, EntityManager entityManager) {
+        String jpql = "SELECT i FROM Imovel i WHERE i.matricula = :matricula";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, matricula);
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        TypedQuery<Imovel> query = entityManager.createQuery(jpql, Imovel.class);
+        query.setParameter("matricula", matricula);
+
+        Imovel imovel = query.getSingleResult();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(imovel);
+        entityManager.getTransaction().commit();
     }
 
 }

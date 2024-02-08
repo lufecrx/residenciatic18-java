@@ -1,116 +1,68 @@
 package com.lufecrx.sistema.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import com.lufecrx.sistema.entidades.Pagamento;
 import com.lufecrx.sistema.servicos.FaturaService;
-import com.lufecrx.sistema.util.GerenciadorDeData;
 
 public class PagamentoDAO {
 
-    public static boolean criar(Pagamento pagamento) {
-        String query = "INSERT INTO Pagamento (idFatura, valor, data) VALUES (?, ?, ?)";
-        try (Connection connection = DataAcessObject.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, pagamento.getIdFatura());
-            statement.setString(2, pagamento.getValor().toString());
-            statement.setString(3, GerenciadorDeData.calendarParaString(pagamento.getData()));
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            System.out.println("Erro ao criar pagamento: " + e.getMessage());
-            return false;
-        }
+    public static void criar(Pagamento pagamento, EntityManager entityManager) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(pagamento);
+        entityManager.getTransaction().commit();
     }
 
-    public static List<Pagamento> retornarTodos(FaturaService faturaService) {
-        String query = "SELECT idFatura, valor, data FROM Pagamento";
-        List<Pagamento> pagamentos = new ArrayList<>();
+    public static List<Pagamento> retornarTodos(FaturaService faturaService, EntityManager entityManager) {
+        String jpql = "Select p FROM Pagamento p";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
+        TypedQuery<Pagamento> query = entityManager.createQuery(jpql, Pagamento.class);
+        List<Pagamento> pagamentos = query.getResultList();
 
-            while (resultSet.next()) {
-                String idFatura = resultSet.getString("idFatura");
-                String valor = resultSet.getString("valor");
-                String data = resultSet.getString("data");
-
-                // Converter valores
-                double valorPagamento = Double.parseDouble(valor);
-                Calendar dataPagamento = GerenciadorDeData.stringParaCalendar(data);
-                
-                Pagamento pagamento = new Pagamento(idFatura, valorPagamento, dataPagamento);
-                pagamentos.add(pagamento);
-            }
-
-            return pagamentos;
-        } catch (SQLException e) {
-            return null;
-        } catch (ParseException e) {
-            return null;
-        }
+        return pagamentos;
     }
 
-    public static Pagamento retornarPelaID(String id) {
-        String query = "SELECT idFatura, valor, data FROM Pagamento WHERE idFatura = ?";
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, id);
-            ResultSet resultSet = statement.executeQuery();
+    public static Pagamento retornarPelaID(String id, EntityManager entityManager) {
+        String jpql = "Select p FROM Pagamento p WHERE p.idFatura = :id";
 
-            if (resultSet.next()) {
-                String idFatura = resultSet.getString("idFatura");
-                String valor = resultSet.getString("valor");
-                String data = resultSet.getString("data");
+        TypedQuery<Pagamento> query = entityManager.createQuery(jpql, Pagamento.class);
+        query.setParameter("id", id);
 
-                // Converter valores
-                double valorPagamento = Double.parseDouble(valor);
-                Calendar dataPagamento = GerenciadorDeData.stringParaCalendar(data);
+        Pagamento pagamento = query.getSingleResult();
 
-                return new Pagamento(idFatura, valorPagamento, dataPagamento);
-            }
-            return null;
-        } catch (SQLException e) {
-            return null;
-        } catch (ParseException e) {
-            return null;
-        }
+        return pagamento;
     }
 
-    public static boolean atualizar(Pagamento pagamento) {
-        String query = "UPDATE Pagamento SET valor = ?, data = ? WHERE idFatura = ?";
+    public static void atualizar(Pagamento pagamento, EntityManager entityManager) {
+        String jpql = "SELECT p FROM Pagamento p WHERE p.idFatura = :id";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, pagamento.getValor().toString());
-            statement.setString(2, GerenciadorDeData.calendarParaString(pagamento.getData()));
-            statement.setString(3, pagamento.getIdFatura());
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        TypedQuery<Pagamento> query = entityManager.createQuery(jpql, Pagamento.class);
+        query.setParameter("id", pagamento.getFatura().getIdFatura());
+
+        Pagamento pagamentoAtualizado = query.getSingleResult();
+
+        pagamentoAtualizado.setValor(pagamento.getValor());
+        pagamentoAtualizado.setData(pagamento.getData());
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(pagamentoAtualizado);
+        entityManager.getTransaction().commit();
     }
 
-    public static boolean deletar(String idFatura) {
-        String query = "DELETE FROM Pagamento WHERE idFatura = ?";
+    public static void deletar(String idFatura, EntityManager entityManager) {
+        String jpql = "SELECT p FROM Pagamento p WHERE p.idFatura = :id";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, idFatura);
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        TypedQuery<Pagamento> query = entityManager.createQuery(jpql, Pagamento.class);
+        query.setParameter("id", idFatura);
+
+        Pagamento pagamento = query.getSingleResult();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(pagamento);
+        entityManager.getTransaction().commit();
     }
 
 }

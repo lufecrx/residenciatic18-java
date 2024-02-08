@@ -42,6 +42,8 @@ public class ClienteDAO {
         Cliente clienteAtualizado = query.getSingleResult();
         clienteAtualizado.setNome(cliente.getNome());
         clienteAtualizado.setPropriedade(cliente.getPropriedade());
+
+        entityManager.getTransaction().begin();
         entityManager.persist(clienteAtualizado);
         entityManager.getTransaction().commit();
     }

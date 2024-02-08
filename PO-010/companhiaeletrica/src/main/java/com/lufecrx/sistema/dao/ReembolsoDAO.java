@@ -1,115 +1,67 @@
 package com.lufecrx.sistema.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
 import com.lufecrx.sistema.entidades.Reembolso;
-import com.lufecrx.sistema.servicos.FaturaService;
-import com.lufecrx.sistema.util.GerenciadorDeData;
 
 public class ReembolsoDAO {
 
-    public static boolean criar(Reembolso reembolso) {
-        String query = "INSERT INTO Reembolso (idFatura, valor, data) VALUES (?, ?, ?)";
-        try (Connection connection = DataAcessObject.getConnection();
-            PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setString(1, reembolso.getIdFatura());
-            statement.setString(2, reembolso.getValor().toString());
-            statement.setString(3, GerenciadorDeData.calendarParaString(reembolso.getData()));
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+    public static void criar(Reembolso reembolso, EntityManager entityManager) {
+        entityManager.getTransaction().begin();
+        entityManager.persist(reembolso);
+        entityManager.getTransaction().commit();
     }
 
-    public static List<Reembolso> retornarTodos(FaturaService faturaService) {
-        String query = "SELECT idFatura, valor, data FROM Reembolso";
-        List<Reembolso> reembolsos = new ArrayList<>();
+    public static List<Reembolso> retornarTodos(EntityManager entityManager) {
+        String jpql = "Select r FROM Reembolso r";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            ResultSet resultSet = statement.executeQuery();
+        TypedQuery<Reembolso> query = entityManager.createQuery(jpql, Reembolso.class);
+        List<Reembolso> reembolsos = query.getResultList();
 
-            while (resultSet.next()) {
-                String idFatura = resultSet.getString("idFatura");
-                String valor = resultSet.getString("valor");
-                String data = resultSet.getString("data");
-
-                // Converter valores
-                double valorPagamento = Double.parseDouble(valor);
-                Calendar dataPagamento = GerenciadorDeData.stringParaCalendar(data);
-                
-                Reembolso reembolso = new Reembolso(idFatura, valorPagamento, dataPagamento);
-                reembolsos.add(reembolso);
-            }
-
-            return reembolsos;
-        } catch (SQLException e) {
-            return null;
-        } catch (ParseException e) {
-            return null;
-        }
+        return reembolsos;
     }
 
-    public static Reembolso retornarPelaID(String id) {
-        String query = "SELECT idFatura, valor, data FROM Reembolso WHERE idFatura = ?";
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, id);
-            ResultSet resultSet = statement.executeQuery();
+    public static Reembolso retornarPelaID(String id, EntityManager entityManager) {
+        String jpql = "Select r FROM Reembolso r WHERE r.idFatura = :id";
 
-            if (resultSet.next()) {
-                String idFatura = resultSet.getString("idFatura");
-                String valor = resultSet.getString("valor");
-                String data = resultSet.getString("data");
+        TypedQuery<Reembolso> query = entityManager.createQuery(jpql, Reembolso.class);
+        query.setParameter("id", id);
 
-                // Converter valores
-                double valorReembolso = Double.parseDouble(valor);
-                Calendar dataReembolso = GerenciadorDeData.stringParaCalendar(data);
+        Reembolso reembolso = query.getSingleResult();
 
-                return new Reembolso(idFatura, valorReembolso, dataReembolso);
-            }
-            return null;
-        } catch (SQLException e) {
-            return null;
-        } catch (ParseException e) {
-            return null;
-        }
+        return reembolso;                
     }
 
-    public static boolean atualizar(Reembolso reembolso) {
-        String query = "UPDATE Reembolso SET valor = ?, data = ? WHERE idFatura = ?";
+    public static void atualizar(Reembolso reembolso, EntityManager entityManager) {
+        String jpql = "SELECT r FROM Reembolso r WHERE r.idFatura = :id";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, reembolso.getValor().toString());
-            statement.setString(2, GerenciadorDeData.calendarParaString(reembolso.getData()));
-            statement.setString(3, reembolso.getIdFatura());
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        TypedQuery<Reembolso> query = entityManager.createQuery(jpql, Reembolso.class);
+        query.setParameter("id", reembolso.getFatura().getIdFatura());
+        
+        Reembolso reembolsoAtualizado = query.getSingleResult();
+
+        reembolsoAtualizado.setValor(reembolso.getValor());
+        reembolsoAtualizado.setData(reembolso.getData());
+
+        entityManager.getTransaction().begin();
+        entityManager.persist(reembolsoAtualizado);
+        entityManager.getTransaction().commit();
     }
 
-    public static boolean deletar(String idFatura) {
-        String query = "DELETE FROM Reembolso WHERE idFatura = ?";
+    public static void deletar(String idFatura, EntityManager entityManager) {
+        String jpql = "SELECT r FROM Reembolso r WHERE r.idFatura = :id";
 
-        try (Connection connection = DataAcessObject.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(query);
-            statement.setString(1, idFatura);
-            statement.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            return false;
-        }
+        TypedQuery<Reembolso> query = entityManager.createQuery(jpql, Reembolso.class);
+        query.setParameter("id", idFatura);
+
+        Reembolso reembolso = query.getSingleResult();
+
+        entityManager.getTransaction().begin();
+        entityManager.remove(reembolso);
+        entityManager.getTransaction().commit();
     }
 
 }
