@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
+import javax.persistence.EntityManager;
+
 import com.lufecrx.sistema.dao.ImovelDAO;
 import com.lufecrx.sistema.entidades.Imovel;
 import com.lufecrx.sistema.util.ImovelNaoEncontradoException;
@@ -12,10 +14,12 @@ import com.lufecrx.sistema.util.ImovelNaoEncontradoException;
 public class ImovelService {
 
     private List<Imovel> imoveis;
+    private EntityManager entityManager;
     private Scanner scanner;
 
-    public ImovelService(Scanner scanner) {
-        this.imoveis = ImovelDAO.retornarTodos() == null ? new ArrayList<>() : ImovelDAO.retornarTodos();
+    public ImovelService(Scanner scanner, EntityManager entityManager) {
+        this.imoveis = ImovelDAO.retornarTodos(entityManager) == null ? new ArrayList<>() : ImovelDAO.retornarTodos(entityManager);
+        this.entityManager = entityManager;
         this.scanner = scanner;
     }
 
@@ -93,7 +97,7 @@ public class ImovelService {
         imoveis.add(novoImovel);
 
         System.out.println("Incluindo novo imóvel...");
-        ImovelDAO.criar(novoImovel);
+        ImovelDAO.criar(novoImovel, entityManager);
         System.out.println("Imóvel incluído com sucesso!");
     }
 
@@ -135,7 +139,7 @@ public class ImovelService {
 
         if (imovelRemovido) {
             System.out.println("Removendo imóvel do sistema...");
-            ImovelDAO.deletar(matricula);
+            ImovelDAO.deletar(matricula, entityManager);
             System.out.println("Imóvel removido com sucesso!");
         } else {
             System.out.println("Imóvel não encontrado. Nenhum imóvel removido.");
@@ -164,7 +168,7 @@ public class ImovelService {
                             }
 
                             System.out.println("Alterando imóvel...");
-                            ImovelDAO.atualizar(imovelEncontrado);
+                            ImovelDAO.atualizar(imovelEncontrado, entityManager);
                             System.out.println("Alterações concluídas com sucesso!");
                         },
                         () -> System.out.println("Imóvel não encontrado."));

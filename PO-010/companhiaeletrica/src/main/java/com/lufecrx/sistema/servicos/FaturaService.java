@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.persistence.EntityManager;
+
 import com.lufecrx.sistema.dao.FaturaDAO;
 import com.lufecrx.sistema.entidades.Fatura;
 import com.lufecrx.sistema.entidades.Imovel;
@@ -16,11 +18,13 @@ public class FaturaService {
 
     private List<Fatura> faturas;
     private ImovelService imovelService;
+    private EntityManager entityManager;
     private Scanner scanner;
 
-    public FaturaService(Scanner scanner, ImovelService imovelService) {
-        this.faturas = FaturaDAO.retornarTodos(imovelService) == null ? new ArrayList<>() : FaturaDAO.retornarTodos(imovelService);
+    public FaturaService(Scanner scanner, ImovelService imovelService, EntityManager entityManager) {
+        this.faturas = FaturaDAO.retornarTodos(entityManager) == null ? new ArrayList<>() : FaturaDAO.retornarTodos(entityManager);
         this.imovelService = imovelService;
+        this.entityManager = entityManager;
         this.scanner = scanner;
     }
 
@@ -83,7 +87,7 @@ public class FaturaService {
         // Adicionar a nova fatura à lista de faturas
         faturas.add(novaFatura);
         System.out.println("Criando a fatura no sistema...");
-        FaturaDAO.criar(novaFatura);
+        FaturaDAO.criar(novaFatura, entityManager);
         System.out.println("Fatura criada com sucesso!");
 
         // Atualizar a última leitura do imóvel
@@ -150,9 +154,7 @@ public class FaturaService {
         return true;
     }
 
-    public Fatura encontrarPorId(String idFatura) throws FaturaNaoEncontradaException {
-        // Expressão lambda para encontrar a fatura pelo ID
-        return faturas.stream().filter(fatura -> fatura.getIdFatura().equals(idFatura)).findFirst()
-                .orElseThrow(() -> new FaturaNaoEncontradaException("Fatura não encontrada!"));
+    public Fatura encontrarPorId(int idFatura) throws FaturaNaoEncontradaException {
+        return faturas.stream().filter(fatura -> fatura.getIdFatura() == idFatura).findFirst().orElseThrow(FaturaNaoEncontradaException::new);     
     }
 }

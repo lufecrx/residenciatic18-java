@@ -2,12 +2,15 @@ package com.lufecrx.sistema.entidades;
 
 import java.util.List;
 
+import javax.persistence.OneToMany;
+
 public class Imovel {
 
 	private String matricula;
 	private String endereco;
 	private Double leituraAtual;
 	private Double leituraAnterior;
+	@OneToMany (mappedBy = "imovel")
 	private List<Fatura> faturas;
 
 	public Imovel(String matricula, String endereco) {

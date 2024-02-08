@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.persistence.EntityManager;
+
 import com.lufecrx.sistema.dao.ClienteDAO;
 import com.lufecrx.sistema.entidades.Cliente;
 import com.lufecrx.sistema.entidades.Imovel;
@@ -13,12 +15,14 @@ public class ClienteService {
 
     private List<Cliente> clientes;
     private ImovelService imovelService;
+    private EntityManager entityManager;
     private Scanner scanner;
 
-    public ClienteService(Scanner scanner, ImovelService imovelService) {
-        this.clientes = ClienteDAO.retornarTodos(imovelService) == null ? new ArrayList<>() : ClienteDAO.retornarTodos(imovelService);
+    public ClienteService(Scanner scanner, ImovelService imovelService, EntityManager entityManager) {
+        this.clientes = ClienteDAO.retornarTodos(entityManager) == null ? new ArrayList<>() : ClienteDAO.retornarTodos(entityManager);
         this.imovelService = imovelService;
         this.scanner = scanner;
+        this.entityManager = entityManager;
     }
 
     public void exibirMenu() {
@@ -101,7 +105,7 @@ public class ClienteService {
             clientes.add(cliente);
 
             System.out.println("Incluindo o cliente no sistema...");
-            ClienteDAO.criar(cliente);
+            ClienteDAO.criar(cliente, entityManager);
         } catch (ImovelNaoEncontradoException e) {
             System.out.println(e.getMessage());
             return;
@@ -146,7 +150,7 @@ public class ClienteService {
 
         if (clienteRemovido) {
             System.out.println("Removendo o cliente do sistema...");
-            ClienteDAO.deletar(cpf);
+            ClienteDAO.deletar(cpf, entityManager);
             System.out.println("Cliente removido com sucesso.");
         } else {
             System.out.println("Cliente não encontrado.");
@@ -187,7 +191,7 @@ public class ClienteService {
 
                             System.out.println("Alterando o cliente no sistema...");
 
-                            ClienteDAO.atualizar(clienteEncontrado);
+                            ClienteDAO.atualizar(clienteEncontrado, entityManager);
 
                             System.out.println("Alterações concluídas com sucesso!");
                         },

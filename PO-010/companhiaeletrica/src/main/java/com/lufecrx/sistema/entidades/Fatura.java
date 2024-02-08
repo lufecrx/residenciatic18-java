@@ -4,12 +4,25 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
 import com.lufecrx.sistema.dao.FaturaDAO;
 
+@Entity
 public class Fatura {
 
-	private String idFatura;
+	@Id
+	@GeneratedValue (strategy = javax.persistence.GenerationType.IDENTITY)
+	private Integer idFatura;
 	private Calendar data;
+	@ManyToOne 
+	@JoinColumn (name = "imovel")
 	private Imovel imovelAssociado;
 	private Double ultimaLeitura;
 	private Double penultimaLeitura;
@@ -17,11 +30,13 @@ public class Fatura {
 	private double valorPago;
 	private double divida;
 	private boolean quitado;
+	@OneToMany (mappedBy = "fatura")
 	private List<Pagamento> pagamentos;
+	@OneToMany (mappedBy = "fatura")
 	private List<Reembolso> reembolsos;
 
 	public Fatura(Imovel imovelAssociado, double penultimaLeitura, double ultimaLeitura, Calendar data, double valor) {
-		this.idFatura = gerarIdFatura(imovelAssociado, data);
+		this.idFatura = null;
 		this.imovelAssociado = imovelAssociado;
 		this.penultimaLeitura = penultimaLeitura;
 		this.ultimaLeitura = ultimaLeitura;
@@ -31,19 +46,6 @@ public class Fatura {
 		this.pagamentos = new ArrayList<>();
 		this.reembolsos = new ArrayList<>();
 		quitado = false;
-	}
-
-	public Fatura (String idFatura, Imovel imovelAssociado, double penultimaLeitura, double ultimaLeitura, Calendar data, double valor) {
-		this.idFatura = idFatura;
-		this.imovelAssociado = imovelAssociado;
-		this.penultimaLeitura = penultimaLeitura;
-		this.ultimaLeitura = ultimaLeitura;
-		this.data = data;
-		this.valor = valor;
-		this.divida = valor;
-		this.pagamentos = new ArrayList<>();
-		this.reembolsos = new ArrayList<>();
-		quitado = false;	
 	}
 
 	public Calendar getData() {
@@ -94,6 +96,10 @@ public class Fatura {
 		return valorPago;
 	}
 
+	public void setValorPago(double valorPago) {
+		this.valorPago = valorPago;
+	}
+
 	public boolean isQuitado() {
 		return quitado;
 	}
@@ -106,7 +112,11 @@ public class Fatura {
 		return divida;
 	}
 
-	public String getIdFatura() {
+	public void setDivida(double divida) {
+		this.divida = divida;
+	}
+
+	public Integer getIdFatura() {
 		return idFatura;
 	}
 
@@ -124,17 +134,17 @@ public class Fatura {
 		return pagamentos.stream().mapToDouble(Pagamento::getValor).sum();
 	}
 
-	public void adicionarPagamento(Pagamento pagamento) {
+	public void adicionarPagamento(Pagamento pagamento, EntityManager entityManager) {
 		pagamentos.add(pagamento);
 		// Atualiza o estado da fatura quando o pagamento é registrado
-		atualizarEstadoFatura();
+		atualizarEstadoFatura(entityManager);
 	}
 
 	public void adicionarReembolso(Reembolso reembolso) {
 		reembolsos.add(reembolso);
 	}
 
-	private void atualizarEstadoFatura() {
+	private void atualizarEstadoFatura(EntityManager entityManager) {
 		this.valorPago = calcularTotalDosPagamentos();
 
 		if (valor > valorPago) {
@@ -143,6 +153,6 @@ public class Fatura {
 			this.quitado = true;
 			this.divida = 0;
 		}
-		FaturaDAO.atualizar(this);
+		FaturaDAO.atualizar(this, entityManager);
 	}
 }

@@ -2,6 +2,9 @@ package com.lufecrx.sistema.aplicacao;
 
 import java.util.Scanner;
 
+import javax.persistence.EntityManager;
+
+import com.lufecrx.sistema.dao.DataAcessObject;
 import com.lufecrx.sistema.servicos.ClienteService;
 import com.lufecrx.sistema.servicos.FaturaService;
 import com.lufecrx.sistema.servicos.ImovelService;
@@ -20,12 +23,15 @@ public class App {
     }
 
     public void carregarEntidades(Scanner scanner) {
+        // Criar gerenciador de entidades
+        EntityManager entityManager = DataAcessObject.criarGerenciadorDeEntidade();
+
         // Carregar dados
         System.out.println("Carregando dados, aguarde...");
-        this.imovelService = new ImovelService(scanner);
-        this.clienteService = new ClienteService(scanner, imovelService);
-        this.faturaService = new FaturaService(scanner, imovelService);
-        this.pagamentoService = new PagamentoService(scanner, faturaService);
+        this.imovelService = new ImovelService(scanner, entityManager);
+        this.clienteService = new ClienteService(scanner, imovelService, entityManager);
+        this.faturaService = new FaturaService(scanner, imovelService, entityManager);
+        this.pagamentoService = new PagamentoService(scanner, faturaService, entityManager);
     }
 
     private void Run() {

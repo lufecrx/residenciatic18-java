@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import com.lufecrx.sistema.entidades.Cliente;
-import com.lufecrx.sistema.servicos.ImovelService;
 
 public class ClienteDAO {
 
@@ -17,7 +16,7 @@ public class ClienteDAO {
         entityManager.getTransaction().commit();
     }
 
-    public static List<Cliente> retornarTodos(ImovelService imovelService, EntityManager entityManager) {
+    public static List<Cliente> retornarTodos(EntityManager entityManager) {
         String jpql = "Select c FROM Cliente c";
         TypedQuery<Cliente> query = entityManager.createQuery(jpql, Cliente.class);
         List<Cliente> clientes = query.getResultList();
@@ -25,7 +24,7 @@ public class ClienteDAO {
         return clientes;
     }
 
-    public static Cliente retornarPeloCPF(String cpf, ImovelService imovelService, EntityManager entityManager) {
+    public static Cliente retornarPeloCPF(String cpf, EntityManager entityManager) {
         String jpql = "Select c FROM Cliente c WHERE c.cpf = :cpf";
         TypedQuery<Cliente> query = entityManager.createQuery(jpql, Cliente.class);
         query.setParameter("cpf", cpf);

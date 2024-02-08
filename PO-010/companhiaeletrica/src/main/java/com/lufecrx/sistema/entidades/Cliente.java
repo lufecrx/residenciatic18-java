@@ -1,12 +1,21 @@
 package com.lufecrx.sistema.entidades;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
 public class Cliente {
 
+	@Id
+	@GeneratedValue (strategy = javax.persistence.GenerationType.IDENTITY)
+	private Integer id;
 	private String nome;
 	private String cpf;
 	private Imovel propriedade;
 
 	public Cliente(String nome, String cpf, Imovel propriedade) {
+		this.id = null;
 		this.nome = nome;
 		this.cpf = cpf;
 		this.propriedade = propriedade;

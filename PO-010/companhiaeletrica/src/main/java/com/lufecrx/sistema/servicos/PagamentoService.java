@@ -6,6 +6,8 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.persistence.EntityManager;
+
 import com.lufecrx.sistema.dao.PagamentoDAO;
 import com.lufecrx.sistema.dao.ReembolsoDAO;
 import com.lufecrx.sistema.entidades.Fatura;
@@ -19,45 +21,39 @@ public class PagamentoService {
     private List<Reembolso> reembolsos;
     private FaturaService faturaService;
     private Scanner scanner;
+    private EntityManager entityManager;
 
-    public PagamentoService(Scanner scanner, FaturaService faturaService) {
+    public PagamentoService(Scanner scanner, FaturaService faturaService, EntityManager entityManager) {
         this.faturaService = faturaService;
+        this.entityManager = entityManager;
         this.scanner = scanner;
         carregarPagamentos();
         carregarReembolsos();
     }
 
     private void carregarPagamentos() {
-        this.pagamentos = PagamentoDAO.retornarTodos(faturaService);
+        this.pagamentos = PagamentoDAO.retornarTodos(entityManager);
 
         if (this.pagamentos == null) {
             this.pagamentos = new ArrayList<>();
         }
         
-        try {
-            for (Pagamento pagamento : this.pagamentos) {
-                Fatura fatura = faturaService.encontrarPorId(pagamento.getIdFatura());
-                fatura.adicionarPagamento(pagamento);
-            }
-        } catch (FaturaNaoEncontradaException e) {
-            System.out.println(e.getMessage());
+        for (Pagamento pagamento : this.pagamentos) {
+            Fatura fatura = pagamento.getFatura();
+            fatura.adicionarPagamento(pagamento, entityManager);
         }
     }
 
     private void carregarReembolsos() {
-        this.reembolsos = ReembolsoDAO.retornarTodos(faturaService);
+        this.reembolsos = ReembolsoDAO.retornarTodos(entityManager);
 
         if (this.reembolsos == null) {
             this.reembolsos = new ArrayList<>();
         }
 
-        try {
-            for (Reembolso reembolso : this.reembolsos) {
-                Fatura fatura = faturaService.encontrarPorId(reembolso.getIdFatura());
-                fatura.adicionarReembolso(reembolso);
-            }
-        } catch (FaturaNaoEncontradaException e) {
-            System.out.println(e.getMessage());
+        for (Reembolso reembolso : this.reembolsos) {
+            Fatura fatura = reembolso.getFatura();
+            fatura.adicionarReembolso(reembolso);
         }
     }
 
@@ -98,11 +94,11 @@ public class PagamentoService {
         } while (opcao != 0);
     }
 
-    public void registraPagamento(String idFatura, double valorPagamento) throws FaturaNaoEncontradaException {
+    public void registraPagamento(int idFatura, double valorPagamento) throws FaturaNaoEncontradaException {
         // Lógica para registrar o pagamento
         Fatura fatura = faturaService.encontrarPorId(idFatura);
 
-        Pagamento novoPagamento = new Pagamento(fatura.getIdFatura(), valorPagamento, Calendar.getInstance());
+        Pagamento novoPagamento = new Pagamento(fatura, valorPagamento, Calendar.getInstance());
         pagamentos.add(novoPagamento);
 
         // Verificar se o pagamento quitou a fatura ou gerou reembolso
@@ -116,7 +112,8 @@ public class PagamentoService {
             System.out.println("Digite o ID da fatura associada ao pagamento: ");
 
             try {
-                String idFatura = scanner.nextLine();
+                int idFatura = scanner.nextInt();
+                scanner.nextLine(); // Consumir a quebra de linha
 
                 System.out.println("Digite o valor do pagamento: ");
                 double valorPagamento = scanner.nextDouble();
@@ -145,7 +142,7 @@ public class PagamentoService {
     public void listarPagamentos() {
         System.out.println("==== Lista de Pagamentos ====");
         for (Pagamento pagamento : pagamentos) {
-            System.out.println("ID da Fatura: " + pagamento.getIdFatura());
+            System.out.println("ID da Fatura: " + pagamento.getFatura().getIdFatura());
             System.out.println("Valor do Pagamento: " + pagamento.getValor());
             System.out.println("------------------------------------");
         }
@@ -158,7 +155,7 @@ public class PagamentoService {
     public void listarReembolsos() {
         System.out.println("==== Lista de Reembolsos ====");
         for (Reembolso reembolso : reembolsos) {
-            System.out.println("ID da Fatura: " + reembolso.getIdFatura());
+            System.out.println("ID da Fatura: " + reembolso.getFatura().getIdFatura());
             System.out.println("Valor do Reembolso: " + reembolso.getValor());
             System.out.println("------------------------------------");
         }
@@ -168,24 +165,24 @@ public class PagamentoService {
         }
     }
 
-    private void verificarQuitacaoFatura(String idFatura, Pagamento pagamento) throws FaturaNaoEncontradaException {
+    private void verificarQuitacaoFatura(int idFatura, Pagamento pagamento) throws FaturaNaoEncontradaException {
         Fatura fatura = faturaService.encontrarPorId(idFatura);
 
         if (fatura != null && !fatura.isQuitado()) {
-            fatura.adicionarPagamento(pagamento);
+            fatura.adicionarPagamento(pagamento, entityManager);
             if (fatura.isQuitado()) {
                 // Se o valor pago for maior que o valor calculado, gerar reembolso
                 double valorEmExcesso = (fatura.getValorPago() - fatura.getValor());
                 if (valorEmExcesso > 0) {
-                    Reembolso novoReembolso = new Reembolso(fatura.getIdFatura(), valorEmExcesso,
+                    Reembolso novoReembolso = new Reembolso(fatura, valorEmExcesso,
                             Calendar.getInstance());
                     reembolsos.add(novoReembolso);
-                    ReembolsoDAO.criar(novoReembolso);
+                    ReembolsoDAO.criar(novoReembolso, entityManager);
                     System.out.println("Reembolso gerado. Valor: " + novoReembolso.getValor());
                 }
             }
             System.out.println("Valor pago: " + fatura.getValorPago());
-            PagamentoDAO.criar(pagamento);
+            PagamentoDAO.criar(pagamento, entityManager);
         }
     }
 }

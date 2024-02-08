@@ -6,7 +6,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import com.lufecrx.sistema.entidades.Pagamento;
-import com.lufecrx.sistema.servicos.FaturaService;
 
 public class PagamentoDAO {
 
@@ -16,7 +15,7 @@ public class PagamentoDAO {
         entityManager.getTransaction().commit();
     }
 
-    public static List<Pagamento> retornarTodos(FaturaService faturaService, EntityManager entityManager) {
+    public static List<Pagamento> retornarTodos(EntityManager entityManager) {
         String jpql = "Select p FROM Pagamento p";
 
         TypedQuery<Pagamento> query = entityManager.createQuery(jpql, Pagamento.class);
