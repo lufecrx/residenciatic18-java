@@ -24,7 +24,7 @@ public class ImovelDAO {
         return imoveis;
     }
 
-    public static Imovel retornarPelaMatricula(String matricula, EntityManager entityManager) {
+    public static Imovel retornarPelaMatricula(int matricula, EntityManager entityManager) {
         String jpql = "Select i FROM Imovel i WHERE i.matricula = :matricula";
 
         TypedQuery<Imovel> query = entityManager.createQuery(jpql, Imovel.class);
@@ -48,7 +48,7 @@ public class ImovelDAO {
         entityManager.getTransaction().commit();
     }
 
-    public static void deletar(String matricula, EntityManager entityManager) {
+    public static void deletar(int matricula, EntityManager entityManager) {
         String jpql = "SELECT i FROM Imovel i WHERE i.matricula = :matricula";
 
         TypedQuery<Imovel> query = entityManager.createQuery(jpql, Imovel.class);

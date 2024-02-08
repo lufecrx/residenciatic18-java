@@ -71,19 +71,10 @@ public class ImovelService {
     }
 
     public void incluir() {
-        System.out.println("Digite a matrícula do imóvel: ");
-        String matricula = scanner.nextLine();
-
         System.out.println("Digite o endereço do imóvel: ");
         String endereco = scanner.nextLine();
 
-        // Verificar se o imóvel já está na lista
-        if (imoveis.stream().anyMatch(imovel -> imovel.getMatricula().equals(matricula))) {
-            System.out.println("Imóvel ja incluso!");
-            return;
-        }
-
-        Imovel novoImovel = new Imovel(matricula, endereco);
+        Imovel novoImovel = new Imovel(endereco);
 
         System.out.println("Leitura anterior de energia: ");
         double leituraAnterior = scanner.nextDouble();
@@ -103,17 +94,21 @@ public class ImovelService {
 
     public void consultar() {
         System.out.println("Digite a matrícula do imóvel que deseja consultar: ");
-        String matricula = scanner.nextLine();
+        int matricula = scanner.nextInt();
+        scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
         // Utilizando a API de Stream para encontrar o imóvel pela matrícula
         imoveis.stream()
-                .filter(imovel -> imovel.getMatricula().equals(matricula))
+                .filter(imovel -> imovel.getMatricula() == matricula)
                 .findFirst()
                 .ifPresentOrElse(
                         imovelEncontrado -> {
+                            String proprietarioNome = imovelEncontrado.getProprietario() != null ? imovelEncontrado.getProprietario().getNome() : "Nenhum proprietário";
                             System.out.println("Imóvel encontrado:");
                             System.out.println("Matrícula: " + imovelEncontrado.getMatricula());
                             System.out.println("Endereço: " + imovelEncontrado.getEndereco());
+                            System.out.println("Proprietário: " + proprietarioNome);
+                            System.out.println("Leitura anterior: " + imovelEncontrado.getLeituraAnterior());
                             System.out.println("Leitura atual: " + imovelEncontrado.getLeituraAtual());
                         },
                         () -> System.out.println("Imóvel não encontrado."));
@@ -125,17 +120,23 @@ public class ImovelService {
             System.out.println("Nenhum imóvel cadastrado.");
         } else {
             for (Imovel imovel : imoveis) {
-                System.out.println("Matrícula: " + imovel.getMatricula() + ", Endereço: " + imovel.getEndereco());
+                String proprietarioNome = imovel.getProprietario() != null ? imovel.getProprietario().getNome() : "Nenhum proprietário";
+                System.out.println("Matrícula: " + imovel.getMatricula()
+                 + ", Endereço: " + imovel.getEndereco()
+                 + ", Proprietário: " + proprietarioNome);
             }
         }
     }
 
     public void excluir() {
+        listar();
+        
         System.out.println("Digite a matrícula do imóvel que deseja excluir: ");
-        String matricula = scanner.nextLine();
+        int matricula = scanner.nextInt();
+        scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
         // Utilizando a API de Stream para encontrar e remover o imóvel pela matrícula
-        boolean imovelRemovido = imoveis.removeIf(imovel -> imovel.getMatricula().equals(matricula));
+        boolean imovelRemovido = imoveis.removeIf(imovel -> imovel.getMatricula() == matricula);
 
         if (imovelRemovido) {
             System.out.println("Removendo imóvel do sistema...");
@@ -148,18 +149,21 @@ public class ImovelService {
 
     public void alterar() {
         System.out.println("Digite a matrícula do imóvel que deseja alterar: ");
-        String matricula = scanner.nextLine();
+        int matricula = scanner.nextInt();
+        scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
         // Encontrar o imóvel pela matrícula
         imoveis.stream()
-                .filter(imovel -> imovel.getMatricula().equals(matricula))
+                .filter(imovel -> imovel.getMatricula() == matricula)
                 .findFirst()
                 .ifPresentOrElse(
                         imovelEncontrado -> {
+                            String proprietarioNome = imovelEncontrado.getProprietario() != null ? imovelEncontrado.getProprietario().getNome() : "Nenhum proprietário";
                             System.out.println("Imóvel encontrado. Informações atuais:");
                             System.out.println("Matrícula: " + imovelEncontrado.getMatricula());
                             System.out.println("Endereço: " + imovelEncontrado.getEndereco());
-
+                            System.out.println("Proprietário: " + proprietarioNome);
+                            
                             // Permitir ao usuário alterar informações
                             System.out.println("Digite o novo endereço (ou pressione Enter para manter o atual): ");
                             String novoEndereco = scanner.nextLine();
@@ -174,10 +178,10 @@ public class ImovelService {
                         () -> System.out.println("Imóvel não encontrado."));
     }
 
-    public Imovel retornarPelaMatricula(String matricula) throws ImovelNaoEncontradoException {
+    public Imovel retornarPelaMatricula(int matricula) throws ImovelNaoEncontradoException {
         // Lógica para encontrar o imóvel com a matrícula fornecida
         Optional<Imovel> imovelEncontrado = imoveis.stream()
-                .filter(imovel -> imovel.getMatricula().equals(matricula))
+                .filter(imovel -> imovel.getMatricula() == matricula)
                 .findFirst();
 
         if (imovelEncontrado.isPresent()) {

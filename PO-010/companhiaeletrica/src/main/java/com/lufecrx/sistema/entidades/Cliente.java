@@ -3,6 +3,8 @@ package com.lufecrx.sistema.entidades;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Cliente {
@@ -12,6 +14,8 @@ public class Cliente {
 	private Integer id;
 	private String nome;
 	private String cpf;
+	@OneToOne
+	@JoinColumn(name = "imovel")
 	private Imovel propriedade;
 
 	public Cliente(String nome, String cpf, Imovel propriedade) {

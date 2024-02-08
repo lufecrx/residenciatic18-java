@@ -65,7 +65,7 @@ public class FaturaService {
         } while (opcao != 0);
     }
 
-    private void registrarLeitura(ImovelService imoveis, String matriculaImovel) throws ImovelNaoEncontradoException {
+    private void registrarLeitura(ImovelService imoveis, int matriculaImovel) throws ImovelNaoEncontradoException {
         Imovel imovel = null;
 
         imovel = imoveis.retornarPelaMatricula(matriculaImovel);
@@ -98,7 +98,9 @@ public class FaturaService {
         imovelService.listar();
 
         System.out.println("Digite a matrícula do imóvel: ");
-        String matriculaImovel = scanner.nextLine();
+        int matriculaImovel = scanner.nextInt();
+        scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
+
         try {
             registrarLeitura(imovelService, matriculaImovel);
         } catch (ImovelNaoEncontradoException e) {

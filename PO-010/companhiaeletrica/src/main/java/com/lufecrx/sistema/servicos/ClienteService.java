@@ -92,16 +92,18 @@ public class ClienteService {
         try {
             imovelService.listar();
             System.out.println("Digite a matricula do imovel do cliente: ");
-            String matricula = scanner.nextLine();
+            int matricula = scanner.nextInt();
+            scanner.nextLine(); // Consumir a quebra de linha após a leitura do número
 
-            if (clientes.stream().anyMatch(cliente -> cliente.getPropriedade().getMatricula().equals(matricula))) {
-                System.out.println("Esta propriedade já é de outro cliente.");
+            if (clientes.stream().anyMatch(cliente -> cliente.getPropriedade().getMatricula() == matricula)) {
+                System.out.println("Esta imovel já é de outro cliente.");
                 return;
             }
 
-            Imovel imovelDoCliente = imovelService.retornarPelaMatricula(matricula);            
+            Imovel imovel = imovelService.retornarPelaMatricula(matricula);            
 
-            Cliente cliente = new Cliente(nome, cpf, imovelDoCliente);
+            Cliente cliente = new Cliente(nome, cpf, imovel);
+            imovel.setProprietario(cliente);
             clientes.add(cliente);
 
             System.out.println("Incluindo o cliente no sistema...");
@@ -126,6 +128,7 @@ public class ClienteService {
                             System.out.println("Cliente encontrado.");
                             System.out.println("Nome: " + clienteEncontrado.getNome());
                             System.out.println("CPF: " + clienteEncontrado.getCpf());
+                            System.out.println("Endereço: " + clienteEncontrado.getPropriedade().getEndereco());
                         },
                         () -> System.out.println("Cliente não encontrado."));
     }
@@ -137,7 +140,7 @@ public class ClienteService {
             System.out.println("Nenhum cliente cadastrado.");
         } else {
             for (Cliente cliente : clientes) {
-                System.out.println("Nome: " + cliente.getNome() + ", CPF: " + cliente.getCpf());
+                System.out.println("Nome: " + cliente.getNome() + ", CPF: " + cliente.getCpf() + ", Endereço: " + cliente.getPropriedade().getEndereco());
             }
         }
     }
@@ -176,17 +179,6 @@ public class ClienteService {
                             String novoNome = scanner.nextLine();
                             if (!novoNome.isEmpty()) {
                                 clienteEncontrado.setNome(novoNome);
-                            }
-
-                            try { 
-                                System.out.println("Digite a matricula da nova propriedade (ou pressione Enter para manter a atual): ");
-                                String novaMatricula = scanner.nextLine();
-                                if (!novaMatricula.isEmpty()) {
-                                    clienteEncontrado.setPropriedade(imovelService.retornarPelaMatricula(novaMatricula));
-                                }
-                            } catch (ImovelNaoEncontradoException e) {
-                                System.out.println(e.getMessage());
-                                return;
                             }
 
                             System.out.println("Alterando o cliente no sistema...");

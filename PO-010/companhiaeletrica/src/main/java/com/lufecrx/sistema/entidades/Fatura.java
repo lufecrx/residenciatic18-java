@@ -124,12 +124,6 @@ public class Fatura {
 		quitado = true;
 	}
 
-	public String gerarIdFatura(Imovel imovelAssociado, Calendar data) {
-		// Mátricula do imovel + data
-		String idFatura = imovelAssociado.getMatricula() + data.getTimeInMillis();
-		return idFatura;
-	}
-
 	public double calcularTotalDosPagamentos() {
 		return pagamentos.stream().mapToDouble(Pagamento::getValor).sum();
 	}

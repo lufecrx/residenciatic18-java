@@ -2,10 +2,17 @@ package com.lufecrx.sistema.entidades;
 
 import java.util.Calendar;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+@Entity
 public class Pagamento {
+    @Id
+    @GeneratedValue (strategy = javax.persistence.GenerationType.IDENTITY)
+    private Integer id;
     @ManyToOne
     @JoinColumn (name = "fatura")
     private Fatura fatura;
@@ -13,6 +20,7 @@ public class Pagamento {
     private Calendar data;
 
     public Pagamento(Fatura fatura, double valor, Calendar data) {
+        this.id = null;
         this.fatura = fatura;
         this.valor = valor;
         this.data = data;
