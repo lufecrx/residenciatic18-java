@@ -1,12 +1,16 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import entidades.Embarque;
 import entidades.Parada;
@@ -217,40 +221,20 @@ public class EmbarqueService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+        File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
 
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            String linha;
-
-            while ((linha = reader.readLine()) != null) {
-                String[] dadosEmbarque = linha.split("|");
-
-                Embarque embarque;
-                String[] dadosPassageiro = dadosEmbarque[0].split(";");
-                String cpfPassageiro = dadosPassageiro[1];
-
-                for (Passageiro passageiro : passageiros.getCadastros()) {
-                    if (passageiro.getCpf().equals(cpfPassageiro)) {
-                        String[] dadosParada = dadosEmbarque[1].split(";");
-                        String nomeParada = dadosParada[1];
-
-                        for (Trecho trecho : trechos.getCadastros()) {
-                            if (trecho.getOrigem().getNome().equals(nomeParada)) {
-                                embarque = new Embarque(passageiro, trecho.getOrigem());
-                                embarques.add(embarque);
-                            }
-                        }
-                    }
-                }
-            }
+        try {
+            // Reconstruir lista de embarques
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            embarques = new Gson().fromJson(conteudoJson, new TypeToken<List<Embarque>>() {}.getType());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de embarques: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
     }
 }

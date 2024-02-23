@@ -1,17 +1,20 @@
 package servicos;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import entidades.Jornada;
 import entidades.Motorista;
 import entidades.Trajeto;
-import entidades.Trecho;
 import entidades.Veiculo;
 import utils.CadastroInterface;
 import utils.CadastroInvalidoException;
@@ -187,7 +190,7 @@ public class JornadaService implements CadastroInterface {
                     default:
                         System.out.println("Opcão inválida.");
                         break;
-                    }
+                }
             }
         } catch (InputMismatchException e) {
             System.out.println("Erro: Entrada inválida para jornada");
@@ -209,7 +212,7 @@ public class JornadaService implements CadastroInterface {
             scanner.nextLine();
         } catch (InputMismatchException e) {
             System.out.println("Erro: Entrada inválida para jornada");
-        } 
+        }
 
         if (index > 0 && index <= getCadastros().size()) {
             jornadas.remove(index - 1);
@@ -239,7 +242,7 @@ public class JornadaService implements CadastroInterface {
         }
     }
 
-    private void alterarMotorista(Jornada jornada, Scanner scanner) {        
+    private void alterarMotorista(Jornada jornada, Scanner scanner) {
         try {
             System.out.println("Motoristas: ");
             motoristas.exibir();
@@ -261,7 +264,7 @@ public class JornadaService implements CadastroInterface {
     }
 
     private void alterarTrajetos(Jornada jornada, Scanner scanner) {
-       
+
         System.out.println("Deseja adicionar ou remover?");
         System.out.println("1 - Adicionar");
         System.out.println("2 - Remover");
@@ -279,17 +282,17 @@ public class JornadaService implements CadastroInterface {
             if (opcao == 1) {
                 System.out.println("Selecione o trajeto que deseja adicionar:");
                 TrajetoService.exibir(jornada.getTrajetos());
-    
+
                 while (true) {
                     System.out.print(
                             "Selecione o número correspondente ao trajeto para adicionar ao jornada ou digite '0' para encerrar: ");
                     int trajeto = scanner.nextInt();
-    
+
                     if (trajeto > 0 && trajeto <= jornada.getTrajetos().size()) {
                         jornada.cadastraTrajeto(jornada.getTrajetos().get(trajeto - 1));
                         System.out.println("Trajeto adicionado com sucesso!");
                     }
-    
+
                     if (trajeto == 0) {
                         break;
                     }
@@ -308,17 +311,17 @@ public class JornadaService implements CadastroInterface {
             if (opcao == 2) {
                 System.out.println("Selecione o trajeto que deseja remover:");
                 TrajetoService.exibir(jornada.getTrajetos());
-    
+
                 while (true) {
                     System.out.println(
                             "Selecione o número correspondente ao trajeto para remover do jornada ou digite '0' para encerrar: ");
                     int trajeto = scanner.nextInt();
-    
+
                     if (trajeto > 0 && trajeto <= jornada.getTrajetos().size()) {
                         jornada.removeTrajeto(jornada.getTrajetos().get(trajeto - 1));
                         System.out.println("Trajeto removido com sucesso!");
                     }
-    
+
                     if (trajeto == 0) {
                         break;
                     }
@@ -339,57 +342,21 @@ public class JornadaService implements CadastroInterface {
 
     @Override
     public void carregar() {
-        String arquivo = "arquivos/" + nomeDoArquivo + ".txt";
+        File arquivo = new File("arquivos/" + nomeDoArquivo + ".json");
 
         try {
-            GerenciadorDeDados.criarArquivoInexistente(arquivo);
+            GerenciadorDeDados.criarArquivoInexistente(arquivo.toString());
         } catch (IOException e) {
             System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(arquivo))) {
-            String linha;
-
-            while ((linha = reader.readLine()) != null) {
-                String[] dados = linha.split("//");
-
-                List<Trajeto> listaDeTrajetos = new ArrayList<>();
-                // Construir trajeto
-                String[] dadosTrajeto = dados[0].split("|");
-                for (String trecho : dadosTrajeto) {
-                    String[] dadosTrecho = trecho.split(";");
-                    String origem = dadosTrecho[0];
-                    String destino = dadosTrecho[1];
-
-                    // Procurar trecho no cadastro de trechos
-                    for (Trajeto trajetoCadastrado : trajetos.getCadastros()) {
-                        for (Trecho trechoCadastrado : trajetoCadastrado.getTrechos()) {
-                            if (trechoCadastrado.getOrigem().getNome().equals(origem)
-                                    && trechoCadastrado.getDestino().getNome().equals(destino)) {
-                                listaDeTrajetos.add(trajetoCadastrado);
-                            }
-                        }
-                    }
-                }
-
-                String motorista = dados[1];
-                String veiculo = dados[2];
-
-                // Procurar motorista no cadastro de motoristas
-                for (Motorista motoristaCadastrado : motoristas.getCadastros()) {
-                    if (motoristaCadastrado.getNome().equals(motorista)) {
-                        // Procurar veiculo no cadastro de veiculo
-                        for (Veiculo veiculoCadastrado : veiculos.getCadastros()) {
-                            if (veiculoCadastrado.getPlaca().equals(veiculo)) {
-                                Jornada jornada = new Jornada(listaDeTrajetos, motoristaCadastrado, veiculoCadastrado);
-                                this.jornadas.add(jornada);
-                            }
-                        }
-                    }
-                }
-            }
+        try {
+            // Reconstruir lista de jornadas
+            String conteudoJson = Files.readString(Path.of(arquivo.toString()));
+            jornadas = new Gson().fromJson(conteudoJson, new TypeToken<List<Jornada>>() {
+            }.getType());
         } catch (IOException e) {
-            System.out.println("Erro ao carregar o arquivo de jornadas: " + e.getMessage());
+            System.out.println("Erro ao carregar o arquivo de " + nomeDoArquivo + ": " + e.getMessage());
         }
     }
 }
